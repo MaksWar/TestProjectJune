@@ -6,24 +6,27 @@ namespace Gameplay.Level
 {
     public class FigureComponent : MonoBehaviour
     {
-        [SerializeField] private string levelId;
-        [SerializeField] private string figureId;
-        [SerializeField] private FigureType figureType;
-        [SerializeField] private List<PathComponent> paths;
         [SerializeField] private ViewComponent view;
+        [SerializeField] private PointersHandlerComponent pointersHandlerComponent;
+
+        private string _levelId;
+        private string _figureId;
+        private FigureType _figureType;
+        private List<PathComponent> _paths;
         
-        public string LevelId => levelId;
-        public string FigureId => figureId;
-        public FigureType FigureType => figureType;
-        public List<PathComponent> Paths => paths;
+        public List<PathComponent> Paths => _paths;
         public ViewComponent View => view;
+        public PointersHandlerComponent HandlerComponent => pointersHandlerComponent;
+
+        public void InitializeView(Sprite sprite, Color color) =>
+            view.Initialize(sprite, color);
 
         public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents)
         {
-            levelId = levelEntry.LevelID;
-            figureId = levelEntry.FigureId;
-            figureType = levelEntry.FigureType;
-            paths = pathComponents;
+            _levelId = levelEntry.LevelID;
+            _figureId = levelEntry.FigureId;
+            _figureType = levelEntry.FigureType;
+            _paths = pathComponents;
         }
     }
 }

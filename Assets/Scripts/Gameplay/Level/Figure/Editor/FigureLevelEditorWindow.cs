@@ -22,6 +22,7 @@ namespace Gameplay.Level.Editor
         [SerializeField] private bool syncFigureIdWithSprite = true;
         [SerializeField] private string figureId;
         [SerializeField] private FigureType figureType = FigureType.Letter;
+        [SerializeField] private Color viewColor = Color.white;
         [SerializeField] private string savePath;
         [SerializeField] private PathEntryType newPathType = PathEntryType.Linear;
         [SerializeField] private List<EditablePathEntry> paths = new();
@@ -96,6 +97,8 @@ namespace Gameplay.Level.Editor
             {
                 figureId = sprite.name;
             }
+
+            viewColor = EditorGUILayout.ColorField("View Color", viewColor);
 
             if (string.IsNullOrWhiteSpace(levelId))
             {
@@ -465,6 +468,7 @@ namespace Gameplay.Level.Editor
 
             SpriteRenderer spriteRenderer = viewObject.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = sprite;
+            spriteRenderer.color = viewColor;
             spriteRenderer.sortingLayerName = "Figure";
             spriteRenderer.sortingOrder = 0;
 
@@ -788,6 +792,7 @@ namespace Gameplay.Level.Editor
                 LevelID = levelId,
                 FigureId = figureId,
                 FigureType = figureType,
+                ViewColor = viewColor,
                 PathEntries = new List<PathEntry>()
             };
 
@@ -840,6 +845,7 @@ namespace Gameplay.Level.Editor
             levelId = levelEntry.LevelID;
             figureId = levelEntry.FigureId;
             figureType = levelEntry.FigureType;
+            viewColor = levelEntry.ViewColor;
             syncFigureIdWithSprite = false;
             UpdateSavePathFromFigureType();
             sprite = FindSpriteByFigureId(figureId);

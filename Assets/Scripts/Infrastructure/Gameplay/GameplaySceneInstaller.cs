@@ -20,7 +20,9 @@ namespace Infrastructure.Gameplay
 
             Container.Bind<StatesFactory>().AsSingle();
             Container.Bind<SceneStateMachine>().AsSingle();
+            Container.Bind<LevelService>().AsSingle();
             Container.Bind<ILevelFiguresFactory>().To<LevelFiguresFactory>().AsSingle();
+            Container.Bind<IFigurePointersFactory>().To<FigurePointersFactory>().AsSingle();
             Container.Bind<ILevelLoader>().To<LevelLoader>().AsSingle();
         }
     }

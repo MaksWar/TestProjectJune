@@ -12,4 +12,10 @@ namespace Gameplay.Level
         Linear = 0,
         Bezier = 1
     }
+
+    public enum PointerType
+    {
+        Default = 0,
+        Final = 1,
+    }
 }

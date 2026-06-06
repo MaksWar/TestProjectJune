@@ -15,15 +15,18 @@ namespace Gameplay.Level
         private readonly IAssetsProvider _assetsProvider;
         private readonly ISpriteAtlasService _spriteAtlasService;
         private readonly IInstantiator _instantiator;
+        private readonly IFigurePointersFactory _pointersFactory;
 
         public LevelFiguresFactory(
             IAssetsProvider assetsProvider,
             ISpriteAtlasService spriteAtlasService,
-            IInstantiator instantiator)
+            IInstantiator instantiator,
+            IFigurePointersFactory pointersFactory)
         {
             _assetsProvider = assetsProvider;
             _spriteAtlasService = spriteAtlasService;
             _instantiator = instantiator;
+            _pointersFactory = pointersFactory;
         }
 
         public async UniTask<FigureComponent> CreateFigure(FigureType type, string id)
@@ -85,7 +88,7 @@ namespace Gameplay.Level
         {
             Sprite sprite = _spriteAtlasService.GetSprite(levelEntry.FigureId, SpriteAtlasService.LevelsLabel);
 
-            figureComponent.View.Initialize(sprite);
+            figureComponent.View.Initialize(sprite, levelEntry.ViewColor);
         }
 
         private static List<PathComponent> CreatePaths(Transform root, LevelEntry levelEntry)

@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e1e30e270c153c4389a6a5a9cda7d4e
+    m_Address: LevelPointers
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 599bd95daf8d8154caf9d5f1c23338ee
     m_Address: Levels_Shapes
     m_ReadOnly: 0

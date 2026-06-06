@@ -8,9 +8,10 @@ namespace Gameplay.Level
         
         public SpriteRenderer View => view;
 
-        public void Initialize(Sprite sprite)
+        public void Initialize(Sprite sprite, Color color)
         {
             view.sprite = sprite;
+            view.color = color;
         }
     }
 }

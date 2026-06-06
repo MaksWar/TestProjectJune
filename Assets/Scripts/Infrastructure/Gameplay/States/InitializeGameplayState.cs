@@ -31,7 +31,7 @@ namespace Infrastructure.Gameplay.States
 
             _loadingCurtain.Hide();
             
-            await _stateMachine.Enter<GameLoopState>();
+            await _stateMachine.Enter<PresentationGameplayState>();
         }
 
         public UniTask Exit()

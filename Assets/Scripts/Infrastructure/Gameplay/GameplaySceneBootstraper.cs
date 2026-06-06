@@ -22,6 +22,7 @@ namespace Infrastructure.Gameplay
             sceneStateMachine.RegisterState(statesFactory.Create<ExitToGameHubState>());
             sceneStateMachine.RegisterState(statesFactory.Create<GameLoopState>());
             sceneStateMachine.RegisterState(statesFactory.Create<InitializeGameplayState>());
+            sceneStateMachine.RegisterState(statesFactory.Create<PresentationGameplayState>());
 
             sceneStateMachine.Enter<InitializeGameplayState>().Forget();
         }

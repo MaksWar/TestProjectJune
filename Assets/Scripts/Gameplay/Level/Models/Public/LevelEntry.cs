@@ -10,6 +10,7 @@ namespace Gameplay.Level.Models.Public
         public string LevelID;
         public string FigureId;
         public FigureType FigureType;
+        public Color ViewColor = Color.white;
         public List<PathEntry> PathEntries = new();
     }
 
