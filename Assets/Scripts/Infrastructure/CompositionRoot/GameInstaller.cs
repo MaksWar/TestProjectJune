@@ -5,7 +5,6 @@ using Infrastructure.CompositionRoot.SubInstallers;
 using Infrastructure.Factories;
 using Infrastructure.Gameplay;
 using Infrastructure.SceneMenegment;
-using Infrastructure.Services.InputTracing;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.SaveLoadSystem;
 using Infrastructure.Services.SaveLoadSystem.AuthService;
@@ -39,7 +38,6 @@ namespace Infrastructure.CompositionRoot
             Container.BindInterfacesTo<StaticDataService>().AsSingle();
 
             Container.BindInterfacesTo<LogService>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ClickTraceService>().AsSingle().NonLazy();
 
             Container.BindInterfacesTo<SceneLoader>().AsSingle();
             Container.Bind<IGameplayContextService>().To<GameplayContextService>().AsSingle();

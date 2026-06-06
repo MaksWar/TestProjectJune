@@ -112,6 +112,7 @@ GameObject:
   - component: {fileID: 1619988998177145494}
   - component: {fileID: 6546653449110573983}
   - component: {fileID: 481632817678471003}
+  - component: {fileID: 7204183948562170031}
   m_Layer: 0
   m_Name: FigureBase
   m_TagString: Untagged
@@ -147,12 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55002abb06d842918ec102768824a707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelId: 
-  figureId: 
-  figureType: 0
-  paths: []
   view: {fileID: 1131044770319815135}
   pointersHandlerComponent: {fileID: 481632817678471003}
+  interactionHandlerComponent: {fileID: 7204183948562170031}
 --- !u!114 &481632817678471003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,5 +161,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b784dbfa3c58b6849b65bf6539c8e642, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7204183948562170031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4375755374761735513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e1ca8723304109b041052b40d83c0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

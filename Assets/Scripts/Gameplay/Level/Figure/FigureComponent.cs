@@ -8,6 +8,7 @@ namespace Gameplay.Level
     {
         [SerializeField] private ViewComponent view;
         [SerializeField] private PointersHandlerComponent pointersHandlerComponent;
+        [SerializeField] private InteractionHandlerComponent interactionHandlerComponent;
 
         private string _levelId;
         private string _figureId;
@@ -18,15 +19,15 @@ namespace Gameplay.Level
         public ViewComponent View => view;
         public PointersHandlerComponent HandlerComponent => pointersHandlerComponent;
 
-        public void InitializeView(Sprite sprite, Color color) =>
-            view.Initialize(sprite, color);
-
         public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents)
         {
             _levelId = levelEntry.LevelID;
             _figureId = levelEntry.FigureId;
             _figureType = levelEntry.FigureType;
             _paths = pathComponents;
+
+            interactionHandlerComponent.Initialize();
         }
+        
     }
 }
