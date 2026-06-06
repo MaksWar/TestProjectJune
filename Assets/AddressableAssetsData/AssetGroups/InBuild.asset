@@ -39,11 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3a027e8479dfc3340ad292f44ddf611a
-    m_Address: Atlasses
+  - m_GUID: 599bd95daf8d8154caf9d5f1c23338ee
+    m_Address: Levels_Shapes
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    - levels
     - sprite_atlas
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a2899b14decfa54d84bc12b297c5123
@@ -51,6 +52,34 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bff88794b9a0f44380854bdfcf8dea3
+    m_Address: Levels_Numbers
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    - levels
+    - sprite_atlas
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 935f02d8b94a3d0418de324ae55e8f73
+    m_Address: Levels
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a18cab7d5bae5424aae2921caab9b57d
+    m_Address: Figures
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bca04f0a52b3c1a48a7700bc4b4cbff6
+    m_Address: Levels_Letters
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    - levels
+    - sprite_atlas
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ea1cfec4403d09940ba0f751a58b24ea
     m_Address: HUD

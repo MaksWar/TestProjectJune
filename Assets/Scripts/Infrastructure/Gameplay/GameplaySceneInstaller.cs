@@ -1,4 +1,5 @@
 using Infrastructure.Factories;
+using Gameplay.Level;
 using UnityEngine;
 using Zenject;
 
@@ -19,6 +20,8 @@ namespace Infrastructure.Gameplay
 
             Container.Bind<StatesFactory>().AsSingle();
             Container.Bind<SceneStateMachine>().AsSingle();
+            Container.Bind<ILevelFiguresFactory>().To<LevelFiguresFactory>().AsSingle();
+            Container.Bind<ILevelLoader>().To<LevelLoader>().AsSingle();
         }
     }
 }

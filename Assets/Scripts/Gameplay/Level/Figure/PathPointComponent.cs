@@ -1,8 +1,6 @@
-using UnityEngine;
-
 namespace Gameplay.Level
 {
-    public class PathPointComponent : MonoBehaviour
+    public class PathPointComponent : UnityEngine.MonoBehaviour
     {
     }
 }

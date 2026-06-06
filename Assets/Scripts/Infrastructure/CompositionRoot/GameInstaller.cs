@@ -3,6 +3,7 @@ using Gameplay.MetaGameplay.Player.Models.Private;
 using Infrastructure.AssetManagement;
 using Infrastructure.CompositionRoot.SubInstallers;
 using Infrastructure.Factories;
+using Infrastructure.Gameplay;
 using Infrastructure.SceneMenegment;
 using Infrastructure.Services.InputTracing;
 using Infrastructure.Services.Log;
@@ -41,6 +42,7 @@ namespace Infrastructure.CompositionRoot
             Container.BindInterfacesAndSelfTo<ClickTraceService>().AsSingle().NonLazy();
 
             Container.BindInterfacesTo<SceneLoader>().AsSingle();
+            Container.Bind<IGameplayContextService>().To<GameplayContextService>().AsSingle();
             
             BindGameBootstrapperFactory();
 

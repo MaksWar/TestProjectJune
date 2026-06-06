@@ -7,5 +7,10 @@ namespace Gameplay.Level
         [SerializeField] private SpriteRenderer view;
         
         public SpriteRenderer View => view;
+
+        public void Initialize(Sprite sprite)
+        {
+            view.sprite = sprite;
+        }
     }
 }

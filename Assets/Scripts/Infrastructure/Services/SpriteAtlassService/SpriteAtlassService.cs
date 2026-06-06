@@ -8,17 +8,17 @@ namespace Infrastructure.Services.SpriteAtlassService
 {
     public class SpriteAtlasService : ISpriteAtlasService
     {
-        public const string RoomsLabel = "rooms";
-        public const string HousesLabel = "houses";
-        public const string ItemsLabel = "items";
-        public const string RecycleModelLabel = "recycle_model";
+        public const string LevelsLabel = "levels";
         
         private readonly Dictionary<string, List<SpriteAtlas>> _atlases = new();
 
         private string _noneIconName = "none";
         private Sprite _noneIcon;
 
-        private readonly List<string> _atlasesTypes = new() { RoomsLabel, ItemsLabel, RecycleModelLabel, HousesLabel };
+        private readonly List<string> _atlasesTypes = new()
+        {
+            LevelsLabel
+        };
 
         private readonly Dictionary<string, List<SpriteAtlas>> _loadedRemoteLocationsAtlasses = new();
         
@@ -31,15 +31,8 @@ namespace Infrastructure.Services.SpriteAtlassService
 
                 foreach (var location in locations)
                 {
-                    Addressables.LoadAssetAsync<SpriteAtlas>(location).Completed += atlasHandle =>
-                    {
-                        if (!_atlases.ContainsKey(type))
-                            _atlases.Add(type, new List<SpriteAtlas>());
-                        _atlases[type].Add(atlasHandle.Result);
-                        var sprite = atlasHandle.Result.GetSprite(_noneIconName);
-                        if (sprite != null)
-                            _noneIcon = sprite;
-                    };
+                    SpriteAtlas atlas = await Addressables.LoadAssetAsync<SpriteAtlas>(location).ToUniTask();
+                    RegisterAtlas(type, atlas);
                 }
             }
         }
@@ -91,9 +84,9 @@ namespace Infrastructure.Services.SpriteAtlassService
 
                 Sprite[] sprites = new Sprite[atlas.spriteCount];
                 atlas.GetSprites(sprites);
-                foreach (var VARIABLE in sprites)
+                foreach (Sprite variable in sprites)
                 {
-                    Debug.Log($"sprite name in atlas {atlas.name} is {VARIABLE.name}");
+                    Debug.Log($"sprite name in atlas {atlas.name} is {variable.name}");
                 }
                 
                 sprite = atlas.GetSprite(name);
@@ -130,6 +123,32 @@ namespace Infrastructure.Services.SpriteAtlassService
 
         public void Dispose()
         {
+        }
+
+        private void RegisterAtlas(string type, SpriteAtlas atlas)
+        {
+            if (atlas == null)
+            {
+                return;
+            }
+
+            if (!_atlases.ContainsKey(type))
+            {
+                _atlases.Add(type, new List<SpriteAtlas>());
+            }
+
+            if (_atlases[type].Contains(atlas))
+            {
+                return;
+            }
+
+            _atlases[type].Add(atlas);
+
+            var sprite = atlas.GetSprite(_noneIconName);
+            if (sprite != null)
+            {
+                _noneIcon = sprite;
+            }
         }
     }
 }

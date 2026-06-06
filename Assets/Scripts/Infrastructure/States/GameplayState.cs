@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.AssetManagement;
+using Infrastructure.Gameplay;
 using Infrastructure.Services.Log;
 using Infrastructure.UI.LoadingCurtain;
 
 namespace Infrastructure.States
 {
-    public class GameplayState : IPaylodedState<string>
+    public class GameplayState : IPaylodedState<GameplayLevelPayload>
     {
         private readonly ILogService _logService;
         private readonly ILoadingCurtain _loadingCurtain;
@@ -22,9 +23,9 @@ namespace Infrastructure.States
             _assetsProvider = assetsProvider;
         }
 
-        public UniTask Enter(string levelID)
+        public UniTask Enter(GameplayLevelPayload payload)
         {
-            _logService.Log($"GameplayState Enter. Level id: {levelID}");
+            _logService.Log($"GameplayState Enter. Level id: {payload.LevelId}, figure type: {payload.FigureType}");
 
             return UniTask.CompletedTask;
         }

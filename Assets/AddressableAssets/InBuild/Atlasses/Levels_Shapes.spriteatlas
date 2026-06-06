@@ -50,12 +50,12 @@ SpriteAtlas:
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
-    - b816340b1ca4e4447ae85403469e1d06: -1889231720087132567
+    - b816340b1ca4e4447ae85403469e1d06: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: -1889231720087132567, guid: b816340b1ca4e4447ae85403469e1d06, type: 3}
+  - {fileID: 21300000, guid: b816340b1ca4e4447ae85403469e1d06, type: 3}
   m_PackedSpriteNamesToIndex:
-  - circle_1_0
+  - circle
   m_RenderDataMap: {}
   m_Tag: Levels_Shapes
   m_IsVariant: 0

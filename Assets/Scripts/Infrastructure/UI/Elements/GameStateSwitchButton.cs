@@ -1,4 +1,6 @@
 using Cysharp.Threading.Tasks;
+using Gameplay.Level;
+using Infrastructure.Gameplay;
 using Infrastructure.Services.Log;
 using Infrastructure.States;
 using UnityEngine;
@@ -41,7 +43,10 @@ namespace Infrastructure.UI.Elements
             switch (targetState)
             {
                 case TargetStates.Loading: gameStateMachine.Enter<GameLoadDataState>().Forget(); break;
-                case TargetStates.Gameplay: gameStateMachine.Enter<GameplayLoadState, string>("test").Forget(); break;
+                case TargetStates.Gameplay:
+                    gameStateMachine.Enter<GameplayLoadState, GameplayLevelPayload>(
+                        new GameplayLevelPayload(FigureType.Shape, "level_1")).Forget();
+                    break;
                 default: log.LogError("Not valid option"); break;
             }
         }
