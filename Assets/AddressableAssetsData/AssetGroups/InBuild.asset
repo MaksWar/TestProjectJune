@@ -44,6 +44,7 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
+    - sprite_atlas
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a2899b14decfa54d84bc12b297c5123
     m_Address: Sounds
