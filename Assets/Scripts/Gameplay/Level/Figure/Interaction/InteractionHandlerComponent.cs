@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infrastructure.Services.Input;
 using UnityEngine;
 using Zenject;
@@ -11,6 +12,9 @@ namespace Gameplay.Level
         private readonly HashSet<InputInteractable> _interactedObjects = new();
 
         private IInputService _inputService;
+        private bool _isSubscribed;
+
+        public event Action<IDraggingInteractable> Interacted;
 
         [Inject]
         private void Construct(IInputService inputService) =>
@@ -24,15 +28,21 @@ namespace Gameplay.Level
 
         private void Subscribe()
         {
+            if (_isSubscribed || _inputService == null)
+            {
+                return;
+            }
+
             _inputService.Dragged += OnDragged;
             _inputService.Clicked += OnClicked;
             _inputService.DragEnded += OnDragEnded;
             _inputService.Released += OnReleased;
+            _isSubscribed = true;
         }
 
         private void Unsubscribe()
         {
-            if (_inputService == null)
+            if (!_isSubscribed || _inputService == null)
             {
                 return;
             }
@@ -41,7 +51,7 @@ namespace Gameplay.Level
             _inputService.Clicked -= OnClicked;
             _inputService.DragEnded -= OnDragEnded;
             _inputService.Released -= OnReleased;
-
+            _isSubscribed = false;
             _interactedObjects.Clear();
         }
 
@@ -53,7 +63,7 @@ namespace Gameplay.Level
                 return;
             }
 
-            Debug.Log($"{interactable.gameObject.name} interacted");
+            Interacted?.Invoke(interactable);
         }
 
         private void OnDragged(InputPointerData inputData)
@@ -64,7 +74,7 @@ namespace Gameplay.Level
                 return;
             }
 
-            Debug.Log($"{interactable.gameObject.name} interacted");
+            Interacted?.Invoke(interactable);
         }
 
         private void OnDragEnded(InputPointerData inputData) =>
@@ -72,6 +82,5 @@ namespace Gameplay.Level
 
         private void OnReleased(InputPointerData inputData) =>
             _interactedObjects.Clear();
-        
     }
 }

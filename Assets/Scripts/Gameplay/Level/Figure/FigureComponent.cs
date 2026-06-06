@@ -18,6 +18,7 @@ namespace Gameplay.Level
         public List<PathComponent> Paths => _paths;
         public ViewComponent View => view;
         public PointersHandlerComponent HandlerComponent => pointersHandlerComponent;
+        public InteractionHandlerComponent InteractionHandlerComponent => interactionHandlerComponent;
 
         public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents)
         {

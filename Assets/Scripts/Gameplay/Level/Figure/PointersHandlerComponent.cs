@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -13,15 +13,69 @@ namespace Gameplay.Level
         private IFigurePointersFactory _pointersFactory;
 
         [Inject]
-        private void Construct(IFigurePointersFactory figurePointersFactory)
-        {
+        private void Construct(IFigurePointersFactory figurePointersFactory) =>
             _pointersFactory = figurePointersFactory;
+
+        public IReadOnlyList<FigurePointerComponent> Pointers => _pointers;
+
+        public UniTask CreatePathPointers(List<Vector2> positions) =>
+            CreatePathPointersAsync(positions);
+
+        public void ShowCurrentPath()
+        {
+            foreach (FigurePointerComponent pointer in _pointers)
+            {
+                pointer?.Show();
+            }
         }
 
-        public UniTask Activate(List<Vector2> positions) =>
-            ActivateAsync(positions);
+        public void HideCurrentPath()
+        {
+            foreach (FigurePointerComponent pointer in _pointers)
+            {
+                pointer?.Hide();
+            }
+        }
 
-        private async UniTask ActivateAsync(List<Vector2> positions)
+        public void ActivateCurrentPath()
+        {
+            foreach (FigurePointerComponent pointer in _pointers)
+            {
+                pointer?.Activate();
+            }
+        }
+
+        public void DeactivateCurrentPath()
+        {
+            foreach (FigurePointerComponent pointer in _pointers)
+            {
+                pointer?.Deactivate();
+            }
+        }
+
+        public void ActivatePointer(int pointerIndex)
+        {
+            DeactivateCurrentPath();
+
+            if (pointerIndex < 0 || pointerIndex >= _pointers.Count)
+            {
+                return;
+            }
+
+            _pointers[pointerIndex]?.Activate();
+        }
+
+        public FigurePointerComponent GetPointer(int pointerIndex)
+        {
+            if (pointerIndex < 0 || pointerIndex >= _pointers.Count)
+            {
+                return null;
+            }
+
+            return _pointers[pointerIndex];
+        }
+
+        private async UniTask CreatePathPointersAsync(List<Vector2> positions)
         {
             Clear();
 
@@ -30,20 +84,25 @@ namespace Gameplay.Level
                 return;
             }
 
-            await CreateAndStorePointer(positions.Last(), PointerType.Final);
-            for (int i = 0; i < positions.Count - 1; i++)
+            for (int i = 0; i < positions.Count; i++)
             {
-                await CreateAndStorePointer(positions[i], PointerType.Default);
+                PointerType pointerType = i == positions.Count - 1 ? PointerType.Final : PointerType.Default;
+                await CreateAndStorePointer(positions[i], pointerType);
             }
         }
 
         private async UniTask CreateAndStorePointer(Vector2 position, PointerType pointerType)
         {
             FigurePointerComponent pointer = await _pointersFactory.CreatePointer(pointerType, position, transform);
-            if (pointer != null)
+            if (pointer == null)
             {
-                _pointers.Add(pointer);
+                return;
             }
+
+            pointer.Hide();
+            pointer.Deactivate();
+
+            _pointers.Add(pointer);
         }
 
         private void Clear()

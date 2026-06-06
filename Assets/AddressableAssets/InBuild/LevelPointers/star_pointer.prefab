@@ -45,7 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40a4e9f2ae2042c3ba4ce47bfe75ae9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewObject: {fileID: 7012599846405201141}
   figurePointerType: 1
+  interactionObserverComponent: {fileID: 3184741028042506226}
 --- !u!1 &7012599846405201141
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,3 +185,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8c14638ce7b414f8cac4bd53c701f97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactionCollider: {fileID: 2068796577392319170}
