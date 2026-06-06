@@ -8,7 +8,7 @@ namespace Infrastructure.Services.SaveLoadSystem.Editor
 {
     public static class DataTools
     {        
-        [MenuItem("Bugiko/DataTools/ClearSaveData")]
+        [MenuItem("Tools/Data/ClearSaveData")]
         private static void ClearSaveData()
         {
             string dir = Application.persistentDataPath;
@@ -29,7 +29,7 @@ namespace Infrastructure.Services.SaveLoadSystem.Editor
             }
         }
         
-        [MenuItem("Bugiko/DataTools/ClearAllLocalData")]
+        [MenuItem("Tools/Data/ClearAllLocalData")]
         private static void ClearAllLocalData()
         {
             PlayerPrefs.DeleteAll();
