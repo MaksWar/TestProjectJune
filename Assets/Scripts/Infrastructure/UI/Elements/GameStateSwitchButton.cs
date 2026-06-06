@@ -1,4 +1,5 @@
-﻿using Infrastructure.Services.Log;
+using Cysharp.Threading.Tasks;
+using Infrastructure.Services.Log;
 using Infrastructure.States;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,8 +40,8 @@ namespace Infrastructure.UI.Elements
         {
             switch (targetState)
             {
-                case TargetStates.Loading: gameStateMachine.Enter<GameLoadDataState>(); break;
-                case TargetStates.Gameplay: gameStateMachine.Enter<GameplayState, string>("polka"); break;
+                case TargetStates.Loading: gameStateMachine.Enter<GameLoadDataState>().Forget(); break;
+                case TargetStates.Gameplay: gameStateMachine.Enter<GameplayLoadState, string>("test").Forget(); break;
                 default: log.LogError("Not valid option"); break;
             }
         }

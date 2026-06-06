@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.AssetManagement;
-using Infrastructure.SceneMenegment;
 using Infrastructure.Services.Log;
 using Infrastructure.UI.LoadingCurtain;
 
@@ -9,30 +8,25 @@ namespace Infrastructure.States
     public class GameplayState : IPaylodedState<string>
     {
         private readonly ILogService _logService;
-        private readonly ISceneLoader _sceneLoader;
         private readonly ILoadingCurtain _loadingCurtain;
         private readonly IAssetsProvider _assetsProvider;
 
         public GameplayState(
             ILoadingCurtain loadingCurtain,
             ILogService logService,
-            IAssetsProvider assetsProvider,
-            ISceneLoader sceneLoader
+            IAssetsProvider assetsProvider
         )
         {
-            _sceneLoader = sceneLoader;
             _loadingCurtain = loadingCurtain;
             _logService = logService;
             _assetsProvider = assetsProvider;
         }
 
-        public async UniTask Enter(string voxelModelId)
+        public UniTask Enter(string levelID)
         {
-            _logService.Log("GamePlayState Enter");
-            _loadingCurtain.Show();
+            _logService.Log($"GameplayState Enter. Level id: {levelID}");
 
-            await _assetsProvider.WarmupAssetsByLabel(AssetsLabels.GameplayState, GetType());
-            await _sceneLoader.Load(InfrastructureAssetPath.GameplayScene);
+            return UniTask.CompletedTask;
         }
 
         public async UniTask Exit()

@@ -4,6 +4,6 @@ namespace Infrastructure.States
 {
     public interface IPaylodedState<TPayload> : IExitableState
     {
-        UniTask Enter(TPayload voxelModelId);
+        UniTask Enter(TPayload levelID);
     }
 }

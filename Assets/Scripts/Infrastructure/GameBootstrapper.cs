@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Infrastructure.Factories;
 using Infrastructure.States;
 using UnityEngine;
@@ -28,11 +29,12 @@ namespace Infrastructure
         {
             _gameStateMachine.RegisterState(_statesFactory.Create<GameBootstrapState>());
             _gameStateMachine.RegisterState(_statesFactory.Create<GameLoadDataState>());
+            _gameStateMachine.RegisterState(_statesFactory.Create<GameplayLoadState>());
             _gameStateMachine.RegisterState(_statesFactory.Create<GameplayState>());
             _gameStateMachine.RegisterState(_statesFactory.Create<LevelsMenuLoadState>());
             _gameStateMachine.RegisterState(_statesFactory.Create<LevelsMenuState>());
 
-            _gameStateMachine.Enter<GameBootstrapState>();
+            _gameStateMachine.Enter<GameBootstrapState>().Forget();
 
 
             DontDestroyOnLoad(gameObject);
