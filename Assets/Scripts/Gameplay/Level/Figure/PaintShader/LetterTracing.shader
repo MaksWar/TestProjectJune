@@ -125,18 +125,33 @@ Shader "Custom/LetterTracing"
                 return lerp(bottom, top, curve.y);
             }
 
-            void ProjectOnPart(float2 P, int startIndex, int pointCount, float totalLength, out float bestDistance, out float pathT)
+            float GetBrushReveal(float2 paintUv, float pathT, float distance, float progress, float totalLength)
             {
-                bestDistance = 1e9;
-                pathT = 0;
+                float progressLength = progress * totalLength;
+                float pixelLength = pathT * totalLength;
+                float aheadDistance = max(0, pixelLength - progressLength);
 
-                if (pointCount < 2 || totalLength < 0.00001)
+                float brushRadius = max(_BrushRadius, 0.00001);
+                float noise = ValueNoise(paintUv * max(_BrushNoiseScale, 1.0));
+                float noisyRadius = max(0.00001, brushRadius + (noise - 0.5) * _BrushNoiseStrength);
+
+                float brushSoftness = max(_BrushSoftness + _EdgeSoftness, 0.00001);
+                float sweptBrushDistance = length(float2(aheadDistance, distance)) - noisyRadius;
+                return 1.0 - smoothstep(-brushSoftness, brushSoftness, sweptBrushDistance);
+            }
+
+            float GetPartReveal(float2 paintUv, int startIndex, int pointCount, float totalLength, float progress)
+            {
+                progress = saturate(progress);
+
+                if (progress <= 0.00001 || pointCount < 2 || totalLength < 0.00001)
                 {
-                    return;
+                    return 0;
                 }
 
                 float accumulatedLength = 0;
-                float2 metricP = ToMetricUv(P);
+                float reveal = 0;
+                float2 metricP = ToMetricUv(paintUv);
 
                 for (int i = 0; i < MAX_PATH_POINTS; i++)
                 {
@@ -158,15 +173,14 @@ Shader "Custom/LetterTracing"
                     float localT = ProjectOnSegment(metricP, A, B);
                     float2 closest = lerp(A, B, localT);
                     float distance = length(metricP - closest);
+                    float pathT = (accumulatedLength + localT * segmentLength) / totalLength;
 
-                    if (distance < bestDistance)
-                    {
-                        bestDistance = distance;
-                        pathT = (accumulatedLength + localT * segmentLength) / totalLength;
-                    }
+                    reveal = max(reveal, GetBrushReveal(paintUv, pathT, distance, progress, totalLength));
 
                     accumulatedLength += segmentLength;
                 }
+
+                return reveal;
             }
 
             fixed4 frag(v2f i) : SV_Target
@@ -185,11 +199,7 @@ Shader "Custom/LetterTracing"
                 }
 
                 float2 paintUv = ToSpriteUv(i.uv);
-
-                float nearestDistance = 1e9;
-                float nearestPathT = 0;
-                float nearestProgress = 0;
-                float nearestTotalLength = 0;
+                float reveal = 0;
 
                 for (int partIndex = 0; partIndex < MAX_PARTS; partIndex++)
                 {
@@ -201,44 +211,9 @@ Shader "Custom/LetterTracing"
                     int startIndex = (int)_PartData[partIndex].x;
                     int pointCount = (int)_PartData[partIndex].y;
                     float totalLength = _PartData[partIndex].z;
+                    float progress = _PartProgress[partIndex];
 
-                    float partDistance;
-                    float partPathT;
-                    ProjectOnPart(paintUv, startIndex, pointCount, totalLength, partDistance, partPathT);
-
-                    if (partDistance < nearestDistance)
-                    {
-                        nearestDistance = partDistance;
-                        nearestPathT = partPathT;
-                        nearestProgress = saturate(_PartProgress[partIndex]);
-                        nearestTotalLength = totalLength;
-                    }
-                }
-
-                float reveal = 0;
-
-                if (nearestProgress <= 0.00001)
-                {
-                    reveal = 0;
-                }
-                else if (nearestProgress >= 0.99999)
-                {
-                    reveal = 1;
-                }
-                else
-                {
-                    float totalLength = max(nearestTotalLength, 0.00001);
-                    float progressLength = nearestProgress * totalLength;
-                    float pixelLength = nearestPathT * totalLength;
-                    float aheadDistance = max(0, pixelLength - progressLength);
-
-                    float brushRadius = max(_BrushRadius, 0.00001);
-                    float noise = ValueNoise(paintUv * max(_BrushNoiseScale, 1.0));
-                    float noisyRadius = max(0.00001, brushRadius + (noise - 0.5) * _BrushNoiseStrength);
-
-                    float brushSoftness = max(_BrushSoftness + _EdgeSoftness, 0.00001);
-                    float sweptBrushDistance = length(float2(aheadDistance, nearestDistance)) - noisyRadius;
-                    reveal = 1.0 - smoothstep(-brushSoftness, brushSoftness, sweptBrushDistance);
+                    reveal = max(reveal, GetPartReveal(paintUv, startIndex, pointCount, totalLength, progress));
                 }
 
                 fixed4 color = _FillColor * i.color;

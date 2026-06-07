@@ -14,7 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Groups:
   - Type: 0
-    Levels: []
+    Levels:
+    - Id: Letter_1
+      Json: {fileID: 4900000, guid: fe565d52329cb974cab40649622bf3a7, type: 3}
+    - Id: Letter_2
+      Json: {fileID: 4900000, guid: 9252a9b6d650eba41b5ee18d6f27ab04, type: 3}
+    - Id: Letter_3
+      Json: {fileID: 4900000, guid: 26c957b273d00f04abb10fb617c68113, type: 3}
+    - Id: Letter_4
+      Json: {fileID: 4900000, guid: c0037248a220b2745b33fea79e4a4e1f, type: 3}
+    - Id: Letter_5
+      Json: {fileID: 4900000, guid: 599c4d8e29f4d034c9ea2eaef59764c5, type: 3}
+    - Id: Letter_6
+      Json: {fileID: 4900000, guid: ad8080ae6bebbb54c90d964b8507d808, type: 3}
+    - Id: Letter_7
+      Json: {fileID: 4900000, guid: b8a1c208dce9db34ba11855c7ca79409, type: 3}
   - Type: 1
     Levels:
     - Id: Number_1
@@ -25,6 +39,12 @@ MonoBehaviour:
       Json: {fileID: 4900000, guid: 59f4bec1f16297b40ac864d6974246b8, type: 3}
     - Id: Number_4
       Json: {fileID: 4900000, guid: f53c6f6421b149445a999b8a6a1c198c, type: 3}
+    - Id: Number_5
+      Json: {fileID: 4900000, guid: 99dd0b050cb9d9e46984e4c66d96114b, type: 3}
+    - Id: Number_6
+      Json: {fileID: 4900000, guid: 44c32ff467ac9c5438fd1b1c3cc31fda, type: 3}
+    - Id: Number_7
+      Json: {fileID: 4900000, guid: 50fd55583bdf49848a58184042e5bfe6, type: 3}
   - Type: 2
     Levels:
     - Id: Shape_1
