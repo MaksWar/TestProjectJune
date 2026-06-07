@@ -273,11 +273,19 @@ namespace Gameplay.Level.Editor
         {
             path.HelperType = (PathHelperType)EditorGUILayout.EnumPopup("Path Helper", path.HelperType);
 
-            if (path.HelperType != PathHelperType.Circle)
+            switch (path.HelperType)
             {
-                return;
+                case PathHelperType.Circle:
+                    DrawCircleHelper(path);
+                    break;
+                case PathHelperType.LinearAddition:
+                    DrawLinearAdditionHelper(path);
+                    break;
             }
+        }
 
+        private static void DrawCircleHelper(EditablePathEntry path)
+        {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
             path.CircleCenter = EditorGUILayout.Vector2Field("Circle Center", path.CircleCenter);
@@ -291,6 +299,22 @@ namespace Gameplay.Level.Editor
             if (GUILayout.Button("Calculate Points"))
             {
                 CalculateCirclePoints(path);
+            }
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private static void DrawLinearAdditionHelper(EditablePathEntry path)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            path.LinearStartPoint = EditorGUILayout.Vector2Field("Start Point", path.LinearStartPoint);
+            path.LinearFinalPoint = EditorGUILayout.Vector2Field("Final Point", path.LinearFinalPoint);
+            path.LinearPointCount = Mathf.Max(2, EditorGUILayout.IntField("Target Count", path.LinearPointCount));
+
+            if (GUILayout.Button("Calculate Points"))
+            {
+                CalculateLinearAdditionPoints(path);
             }
 
             EditorGUILayout.EndVertical();
@@ -334,6 +358,30 @@ namespace Gameplay.Level.Editor
             }
 
             return 4f / 3f * Mathf.Tan(Mathf.PI / (2f * pointCount)) * radius;
+        }
+
+        private static void CalculateLinearAdditionPoints(EditablePathEntry path)
+        {
+            int pointCount = Mathf.Max(2, path.LinearPointCount);
+            Vector2 startPoint = path.LinearStartPoint;
+            Vector2 finalPoint = path.LinearFinalPoint;
+            Vector2 direction = finalPoint - startPoint;
+            float angle = direction.sqrMagnitude > 0.0001f
+                ? Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg
+                : 0f;
+            float handleLength = pointCount > 1
+                ? direction.magnitude / (pointCount - 1) * 0.35f
+                : DefaultHandleLength;
+
+            path.Closed = false;
+            path.Points.Clear();
+
+            for (int i = 0; i < pointCount; i++)
+            {
+                float t = i / (float)(pointCount - 1);
+                Vector2 position = Vector2.Lerp(startPoint, finalPoint, t);
+                path.Points.Add(CreatePoint(position, angle, handleLength));
+            }
         }
 
         private void AddPath(PathEntryType type)
@@ -1086,6 +1134,9 @@ namespace Gameplay.Level.Editor
             public Vector2 CircleCenter;
             public float CircleDistanceByCenter = 1f;
             public int CirclePointCount = 8;
+            public Vector2 LinearStartPoint = new(-1f, 0f);
+            public Vector2 LinearFinalPoint = new(1f, 0f);
+            public int LinearPointCount = 2;
         }
 
         [Serializable]
@@ -1099,7 +1150,8 @@ namespace Gameplay.Level.Editor
         private enum PathHelperType
         {
             None = 0,
-            Circle = 1
+            Circle = 1,
+            LinearAddition = 2
         }
     }
 }
