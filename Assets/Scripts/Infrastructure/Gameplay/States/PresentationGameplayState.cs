@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Gameplay.Level;
 using Gameplay.Level.Presentation;
-using Infrastructure.Gameplay.Tips;
+using Gameplay.Tips;
 using Infrastructure.Services.Input;
 using Infrastructure.Services.SoundService;
 using Infrastructure.States;

@@ -8,6 +8,8 @@ namespace Gameplay.Level
 {
     public class LevelService
     {
+        private const float FirstCompletedPointerProgress = 0.0001f;
+
         private readonly SceneStateMachine _sceneStateMachine;
 
         private FigureComponent _currentFigure;
@@ -125,7 +127,9 @@ namespace Gameplay.Level
         private void UpdateTracingProgress(int completedPointerIndex)
         {
             int pointerCount = _currentFigure.HandlerComponent.Pointers.Count;
-            float progress = pointerCount <= 1 ? 1f : (float)completedPointerIndex / (pointerCount - 1);
+            float progress = pointerCount <= 1
+                ? 1f
+                : Mathf.Max(FirstCompletedPointerProgress, (float)completedPointerIndex / (pointerCount - 1));
 
             _currentFigure.LetterTracingController?.SetPartProgress(_currentPathIndex, progress);
         }

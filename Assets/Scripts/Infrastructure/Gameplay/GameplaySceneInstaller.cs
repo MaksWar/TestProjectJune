@@ -1,6 +1,6 @@
 using Infrastructure.Factories;
 using Gameplay.Level;
-using Infrastructure.Gameplay.Tips;
+using Gameplay.Tips;
 using Infrastructure.Services.Input;
 using UnityEngine;
 using Zenject;

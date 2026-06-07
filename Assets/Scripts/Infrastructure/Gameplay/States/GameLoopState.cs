@@ -1,5 +1,5 @@
 using Cysharp.Threading.Tasks;
-using Infrastructure.Gameplay.Tips;
+using Gameplay.Tips;
 using Infrastructure.States;
 
 namespace Infrastructure.Gameplay.States

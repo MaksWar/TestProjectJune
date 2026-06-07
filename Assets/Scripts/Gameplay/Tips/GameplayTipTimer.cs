@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Gameplay.Tips.GameplayTips;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips
 {
     public class GameplayTipTimer
     {

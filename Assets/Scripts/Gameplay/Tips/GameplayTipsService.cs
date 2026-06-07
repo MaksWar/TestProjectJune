@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Gameplay.Level;
 using Gameplay.Level.Presentation;
+using Gameplay.Tips.GameplayTips;
 using Infrastructure.AssetManagement;
 using Infrastructure.Services.Input;
 using Infrastructure.Services.SoundService;
 using UnityEngine;
 using Zenject;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips
 {
     public class GameplayTipsService : IGameplayTipsService, ITickable, IDisposable
     {

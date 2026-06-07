@@ -1,6 +1,6 @@
 using Gameplay.Level;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips
 {
     public interface IGameplayTipsService
     {

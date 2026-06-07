@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips.GameplayTips
 {
     public abstract class BaseGameplayTip
     {

@@ -5,7 +5,7 @@ using Infrastructure.AssetManagement;
 using UnityEngine;
 using Zenject;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips.GameplayTips
 {
     public class FingerGameplayTip : BaseGameplayTip
     {

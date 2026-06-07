@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips
 {
     public class FingerComponent : MonoBehaviour
     {

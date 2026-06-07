@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using Infrastructure.Services.SoundService;
 using UnityEngine;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips.GameplayTips
 {
     public class SoundGameplayTip : BaseGameplayTip
     {

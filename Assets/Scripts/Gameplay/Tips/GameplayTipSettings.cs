@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Infrastructure.Gameplay.Tips
+namespace Gameplay.Tips
 {
     [Serializable]
     public class GameplayTipSettings
