@@ -22,7 +22,7 @@ namespace Utilities
             }
             else if (_relation < 1.45f)
             {
-                SetScale(0.6f);
+                SetScale(1f);
             }
         }
 

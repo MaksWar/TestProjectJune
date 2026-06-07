@@ -55,3 +55,9 @@ MonoBehaviour:
       Json: {fileID: 4900000, guid: aeccae66fef63694ca49a3e50f012035, type: 3}
     - Id: Shape_4
       Json: {fileID: 4900000, guid: 794294db02d07df45ba8344b902b8098, type: 3}
+    - Id: Shape_5
+      Json: {fileID: 4900000, guid: abf7334018641ee4986d3126b2543d68, type: 3}
+    - Id: Shape_6
+      Json: {fileID: 4900000, guid: 0c2c56fcb0dd3d5479c9e3394da61c68, type: 3}
+    - Id: Shape_7
+      Json: {fileID: 4900000, guid: 56a7661896633684f97ecd4fb7635820, type: 3}

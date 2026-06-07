@@ -345,10 +345,10 @@ namespace Gameplay.Level.Editor
 
             for (int i = 0; i < pointCount; i++)
             {
-                float angle = i * 360f / pointCount;
+                float angle = 180f - i * 360f / pointCount;
                 Vector2 direction = GetDirection(angle);
                 Vector2 position = path.CircleCenter + direction * radius;
-                float tangentAngle = angle + 90f;
+                float tangentAngle = angle - 90f;
                 float handleLength = CalculateCircleHandleLength(radius, pointCount);
 
                 path.Points.Add(CreatePoint(position, tangentAngle, handleLength));
