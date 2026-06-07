@@ -55,7 +55,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1320819232144118973}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+  m_Script: {fileID: 11500000, guid: a4a5ffec0dfb48889d38c98fa257fe77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 5363595278366597270}
@@ -76,6 +76,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  parentScrollRect: {fileID: 0}
+  directionThreshold: 8
 --- !u!1 &2265422122353213882
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,7 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d883506750c46b999addbc0c0e9fbfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  categoryNameText: {fileID: 5383668841692716585}
   levelViewContainer: {fileID: 5363595278366597270}
+  scrollDirectionRouter: {fileID: 4936244613849334100}
 --- !u!114 &4273187704628272721
 MonoBehaviour:
   m_ObjectHideFlags: 0

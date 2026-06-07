@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 90
+    m_Left: 110
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
@@ -391,6 +391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CategoriesGroupViewContainer: {fileID: 4569461459365788915}
+  CategoriesScrollRect: {fileID: 5011482056755115736}
   CategoriesGroupViewComponentPrefab: {fileID: 5130750881463791088, guid: 83fd30e06fd731c4ab7875d4975584d4, type: 3}
   LevelViewComponentPrefab: {fileID: 8357330110963936609, guid: 189f4572d4fac394e97206f93765f4be, type: 3}
 --- !u!1 &8747397545161212729

@@ -6,6 +6,7 @@ using Infrastructure.Gameplay;
 using Infrastructure.Services.SpriteAtlassService;
 using Infrastructure.States;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gameplay.LevelMenu
 {
@@ -14,6 +15,7 @@ namespace Gameplay.LevelMenu
         public const string PrefabName = "MenuLevelsWindow";
         
         [SerializeField] private Transform CategoriesGroupViewContainer;
+        [SerializeField] private ScrollRect CategoriesScrollRect;
         [Header("Prefabs")]
         [SerializeField] private CategoriesGroupViewComponent CategoriesGroupViewComponentPrefab;
         [SerializeField] private LevelViewComponent LevelViewComponentPrefab;
@@ -66,6 +68,7 @@ namespace Gameplay.LevelMenu
             await operation.ToUniTask();
 
             CategoriesGroupViewComponent categoryGroup = operation.Result[0];
+            categoryGroup.SetParentScrollRect(CategoriesScrollRect);
 
             List<UniTask<LevelViewComponent>> createLevelViewTasks = new();
 

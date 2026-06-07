@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using Gameplay.Level;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gameplay.LevelMenu
 {
     public class CategoriesGroupViewComponent : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI categoryNameText;
         [SerializeField] private Transform levelViewContainer;
+        [SerializeField] private NestedScrollRectDirectionRouter scrollDirectionRouter;
         
         private List<LevelViewComponent> _levelViewComponents = new();
         private FigureType _figureType;
@@ -19,6 +23,11 @@ namespace Gameplay.LevelMenu
         {
             _figureType = figureType;
             _levelViewComponents = levelViewComponents;
+            
+            categoryNameText.text = _figureType.ToString();
         }
+
+        public void SetParentScrollRect(ScrollRect scrollRect) =>
+            scrollDirectionRouter.SetParentScrollRect(scrollRect);
     }
 }
