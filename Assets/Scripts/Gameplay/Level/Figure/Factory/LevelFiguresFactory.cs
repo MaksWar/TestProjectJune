@@ -17,19 +17,22 @@ namespace Gameplay.Level
         private readonly ILevelCatalogService _levelCatalogService;
         private readonly IInstantiator _instantiator;
         private readonly IFigurePointersFactory _pointersFactory;
+        private readonly Camera _gameplayCamera;
 
         public LevelFiguresFactory(
             IAssetsProvider assetsProvider,
             ISpriteAtlasService spriteAtlasService,
             ILevelCatalogService levelCatalogService,
             IInstantiator instantiator,
-            IFigurePointersFactory pointersFactory)
+            IFigurePointersFactory pointersFactory,
+            Camera gameplayCamera)
         {
             _assetsProvider = assetsProvider;
             _spriteAtlasService = spriteAtlasService;
             _levelCatalogService = levelCatalogService;
             _instantiator = instantiator;
             _pointersFactory = pointersFactory;
+            _gameplayCamera = gameplayCamera;
         }
 
         public async UniTask<FigureComponent> CreateFigure(FigureType type, string id)
@@ -59,7 +62,7 @@ namespace Gameplay.Level
             InitializeViews(figureComponent, levelEntry);
 
             List<PathComponent> pathComponents = CreatePaths(figureObject.transform, levelEntry);
-            figureComponent.Initialize(levelEntry, pathComponents);
+            figureComponent.Initialize(levelEntry, pathComponents, _gameplayCamera);
 
             return figureComponent;
         }

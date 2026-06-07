@@ -12,6 +12,7 @@ namespace Gameplay.Level
         [SerializeField] private PointersHandlerComponent pointersHandlerComponent;
         [SerializeField] private InteractionHandlerComponent interactionHandlerComponent;
         [SerializeField] private LetterTracingController letterTracingController;
+        [SerializeField] private FigureCameraHeightFitter cameraHeightFitter;
 
         private string _levelId;
         private string _figureId;
@@ -25,7 +26,7 @@ namespace Gameplay.Level
         public InteractionHandlerComponent InteractionHandlerComponent => interactionHandlerComponent;
         public LetterTracingController LetterTracingController => letterTracingController;
 
-        public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents)
+        public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents, Camera gameplayCamera)
         {
             _levelId = levelEntry.LevelID;
             _figureId = levelEntry.FigureId;
@@ -33,6 +34,13 @@ namespace Gameplay.Level
             _paths = pathComponents;
 
             interactionHandlerComponent.Initialize();
+            if (cameraHeightFitter == null)
+            {
+                return;
+            }
+
+            cameraHeightFitter.SetCamera(gameplayCamera);
+            cameraHeightFitter.Fit();
         }
         
     }
