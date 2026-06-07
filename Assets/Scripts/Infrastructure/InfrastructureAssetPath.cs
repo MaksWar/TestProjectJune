@@ -7,7 +7,8 @@ namespace Infrastructure
         public const string GameplayScene = "Gameplay";
         public const string LevelsMenuScene = "LevelsMenu";
         public const string GameLoadingScene = "LoadingScene";
-        public const string HUDRoot = "HUDRoot";
+        public const string HUDRoot = "HUD";
+        public const string GUIRoot = "GUI";
         public const string GameBootstraper = "Infrastructure/GameBootstrapper";
     }
 }

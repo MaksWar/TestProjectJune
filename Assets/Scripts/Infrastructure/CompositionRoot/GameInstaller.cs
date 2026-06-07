@@ -12,6 +12,7 @@ using Infrastructure.Services.SaveLoadSystem.AuthService;
 using Infrastructure.Services.SoundService;
 using Infrastructure.Services.SpriteAtlassService;
 using Infrastructure.StaticData;
+using Infrastructure.UI;
 using Infrastructure.UI.LoadingCurtain;
 using Infrastructure.UI.LoadingCurtain.Proxy;
 using Zenject;
@@ -43,6 +44,7 @@ namespace Infrastructure.CompositionRoot
 
             Container.BindInterfacesTo<SceneLoader>().AsSingle();
             Container.Bind<IGameplayContextService>().To<GameplayContextService>().AsSingle();
+            Container.Bind<IUIService>().To<UIService>().AsSingle();
             
             BindGameBootstrapperFactory();
 

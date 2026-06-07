@@ -14,9 +14,8 @@ namespace Infrastructure.UI.Elements
         private enum TargetStates
         {
             None = 0,
-            Loading = 1,
+            LevelsMenu = 1,
             Gameplay = 2 ,
-            GenerateLevel = 3 ,
         }
         
         [SerializeField] private TargetStates targetState = 0;
@@ -42,11 +41,19 @@ namespace Infrastructure.UI.Elements
         {
             switch (targetState)
             {
-                case TargetStates.Loading: gameStateMachine.Enter<GameLoadDataState>().Forget(); break;
-                case TargetStates.Gameplay:
-                    gameStateMachine.Enter<GameplayLoadState, GameplayLevelPayload>(
-                        new GameplayLevelPayload(FigureType.Number, "Number_1")).Forget();
+                case TargetStates.LevelsMenu:
+                {
+                    gameStateMachine.Enter<LevelsMenuLoadState>().Forget();
+
                     break;
+                }
+                case TargetStates.Gameplay:
+                {
+                    gameStateMachine.Enter<GameplayLoadState, GameplayLevelPayload>(new GameplayLevelPayload(FigureType.Number, "Number_1")).Forget();
+                    
+                    break;
+                }
+
                 default: log.LogError("Not valid option"); break;
             }
         }

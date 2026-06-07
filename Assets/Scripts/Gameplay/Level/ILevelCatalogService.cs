@@ -6,6 +6,7 @@ namespace Gameplay.Level
 {
     public interface ILevelCatalogService
     {
+        UniTask<IReadOnlyList<LevelGroupData>> GetGroupsAsync();
         IReadOnlyList<LevelData> GetLevels(FigureType type);
         bool TryGetLevel(FigureType type, string id, out LevelData levelData);
         UniTask<LevelData> GetNextLevel(FigureType type, string currentId);

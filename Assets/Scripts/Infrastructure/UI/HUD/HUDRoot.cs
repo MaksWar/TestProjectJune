@@ -8,27 +8,21 @@ namespace Infrastructure.UI.HUD
     {
         [SerializeField] private CanvasGroup hudCanvasGroup;
 
-        private HudType _currentHudType;
-
         public Transform Transform => transform;
-        public HudType HudType => _currentHudType;
 
         public async UniTask InitializeAsync()
         {
             DisableCanvasGroup();
         }
 
-        public void Show(HudType hudType)
+        public void Show()
         {
             EnableCanvasGroup();
-            Hide();
-            
-            _currentHudType = hudType;
         }
 
         public void Hide()
         {
-            _currentHudType = HudType.None;
+            DisableCanvasGroup();
         }
 
         private void DisableCanvasGroup() =>
@@ -42,14 +36,7 @@ namespace Infrastructure.UI.HUD
     public enum HudType
     {
         None = 0,
-        Lobby = 1,
-        Shop = 2,
-        Gallery = 4,
-        NoAds = 8,
-        Auction = 16,
-        RoomCustomisation = 32,
-        GameplayWin = 64,
-        MyWorksCollection = 128,
-        Gameplay = 256,
+        LevelMenu = 1,
+        Gameplay = 2,
     }
 }

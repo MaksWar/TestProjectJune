@@ -2,12 +2,14 @@ using Cysharp.Threading.Tasks;
 using Infrastructure.AssetManagement;
 using Infrastructure.Gameplay;
 using Infrastructure.Services.Log;
+using Infrastructure.UI;
 using Infrastructure.UI.LoadingCurtain;
 
 namespace Infrastructure.States
 {
     public class GameplayState : IPaylodedState<GameplayLevelPayload>
     {
+        private readonly IUIService _uiService;
         private readonly ILogService _logService;
         private readonly ILoadingCurtain _loadingCurtain;
         private readonly IAssetsProvider _assetsProvider;
@@ -15,11 +17,13 @@ namespace Infrastructure.States
         public GameplayState(
             ILoadingCurtain loadingCurtain,
             ILogService logService,
-            IAssetsProvider assetsProvider
+            IAssetsProvider assetsProvider,
+            IUIService uiService
         )
         {
-            _loadingCurtain = loadingCurtain;
+            _uiService = uiService;
             _logService = logService;
+            _loadingCurtain = loadingCurtain;
             _assetsProvider = assetsProvider;
         }
 
@@ -33,6 +37,7 @@ namespace Infrastructure.States
         public async UniTask Exit()
         {
             _loadingCurtain.Show();
+            _uiService.HUDRoot.Hide();
 
             await _assetsProvider.ReleaseAssetsByLabel(AssetsLabels.GameplayState, GetType());
         }

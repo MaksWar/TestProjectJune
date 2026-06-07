@@ -6,6 +6,7 @@ using Infrastructure.Services.SaveLoadSystem.AuthService;
 using Infrastructure.Services.SoundService;
 using Infrastructure.Services.SpriteAtlassService;
 using Infrastructure.StaticData;
+using Infrastructure.UI;
 using Infrastructure.UI.LoadingCurtain.Proxy;
 using UnityEngine.Device;
 
@@ -23,6 +24,7 @@ namespace Infrastructure.States
         private readonly ISpriteAtlasService _spriteAtlasService;
         private readonly ILoadingCurtainProxy _loadingCurtainProxy;
         private readonly IPrivateModelProvider _privateModelProvider;
+        private readonly IUIService _uiService;
 
         public GameBootstrapState(
             GameStateMachine gameStateMachine,
@@ -34,7 +36,8 @@ namespace Infrastructure.States
             IPrivateModelProvider privateModelProvider,
             IAuthService authService,
             ISpriteAtlasService spriteAtlasService,
-            ISoundService soundService
+            ISoundService soundService,
+            IUIService uiService
         )
         {
             _logService = logService;
@@ -47,6 +50,7 @@ namespace Infrastructure.States
             _spriteAtlasService = spriteAtlasService;
             _loadingCurtainProxy = loadingCurtainProxy;
             _privateModelProvider = privateModelProvider;
+            _uiService = uiService;
         }
 
         public async UniTask Enter()
@@ -81,6 +85,7 @@ namespace Infrastructure.States
             await _privateModelProvider.InitializeAsync();
             await _soundService.InitializeAsync();
             await _spriteAtlasService.InitializeAsync();
+            await _uiService.InitializeAsync();
         }
 
 

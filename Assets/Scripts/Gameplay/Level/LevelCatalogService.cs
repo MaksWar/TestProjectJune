@@ -19,6 +19,15 @@ namespace Gameplay.Level
             _assetsProvider = assetsProvider;
         }
 
+        public async UniTask<IReadOnlyList<LevelGroupData>> GetGroupsAsync()
+        {
+            await LoadCatalogIfNeeded();
+
+            return _catalog?.Groups != null
+                ? _catalog.Groups
+                : System.Array.Empty<LevelGroupData>();
+        }
+
         public IReadOnlyList<LevelData> GetLevels(FigureType type)
         {
             LevelGroupData group = _catalog?.GetLevelGroupByType(type);

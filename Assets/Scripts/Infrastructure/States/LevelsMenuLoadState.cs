@@ -1,8 +1,12 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using Gameplay.Level;
+using Gameplay.LevelMenu;
 using Infrastructure.AssetManagement;
 using Infrastructure.SceneMenegment;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.SaveLoadSystem;
+using Infrastructure.Services.SpriteAtlassService;
+using Infrastructure.UI;
 using Infrastructure.UI.LoadingCurtain;
 
 namespace Infrastructure.States
@@ -14,7 +18,11 @@ namespace Infrastructure.States
         private readonly ILoadingCurtain _loadingCurtain;
         private readonly IAssetsProvider _assetsProvider;
         private readonly GameStateMachine _gameStateMachine;
-        private readonly IPrivateModelProvider _privateModelProvider;
+        private readonly IUIService _uiService;
+        private readonly ILevelCatalogService _levelCatalogService;
+        private readonly ISpriteAtlasService _spriteAtlasService;
+
+        private LevelMenuPresenterComponent _levelMenu;
 
         public LevelsMenuLoadState(
             ILoadingCurtain loadingCurtain,
@@ -22,7 +30,9 @@ namespace Infrastructure.States
             ILogService logService,
             IAssetsProvider assetsProvider,
             GameStateMachine gameStateMachine,
-            IPrivateModelProvider privateModelProvider
+            IUIService uiService,
+            ILevelCatalogService levelCatalogService,
+            ISpriteAtlasService spriteAtlasService
         )
         {
             _loadingCurtain = loadingCurtain;
@@ -30,7 +40,9 @@ namespace Infrastructure.States
             _logService = logService;
             _assetsProvider = assetsProvider;
             _gameStateMachine = gameStateMachine;
-            _privateModelProvider = privateModelProvider;
+            _uiService = uiService;
+            _levelCatalogService = levelCatalogService;
+            _spriteAtlasService = spriteAtlasService;
         }
 
         public async UniTask Enter()
@@ -41,6 +53,8 @@ namespace Infrastructure.States
             await _assetsProvider.WarmupAssetsByLabel(AssetsLabels.MetaGameplayState, GetType());
             await _sceneLoader.Load(InfrastructureAssetPath.LevelsMenuScene);
 
+            await InitializeLevelMenu();
+
             _loadingCurtain.Hide();
             
             await _gameStateMachine.Enter<LevelsMenuState>();
@@ -48,5 +62,12 @@ namespace Infrastructure.States
 
         public UniTask Exit() =>
             UniTask.CompletedTask;
+
+        private async UniTask InitializeLevelMenu()
+        {
+            _levelMenu = await _uiService.OpenUIEntity<LevelMenuPresenterComponent>(LevelMenuPresenterComponent.PrefabName);
+
+            await _levelMenu.InitializeAsync(_levelCatalogService, _gameStateMachine, _spriteAtlasService);
+        }
     }
 }
