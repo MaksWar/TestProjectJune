@@ -37,6 +37,7 @@ namespace Infrastructure.Gameplay.States
 
             await _soundService.PlaySoundAsync(soundKey);
             await _levelService.Activate(payload.FigureComponent);
+
             _gameplayTipsService.Start(payload.FigureType, payload.FigureComponent);
 
             _sceneStateMachine.Enter<GameLoopState>().Forget();

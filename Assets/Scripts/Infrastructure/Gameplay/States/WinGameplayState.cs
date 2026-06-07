@@ -22,9 +22,7 @@ namespace Infrastructure.Gameplay.States
 
         public async UniTask Enter()
         {
-            await _soundService.PlayMusicAsync(PresentationSoundsMap.WinSounds.GetRandomElement());
-            
-            await UniTask.Delay(100);
+            await _soundService.PlaySoundAsync(PresentationSoundsMap.WinSounds.GetRandomElement());
             
             await _sceneStateMachine.Enter<TransitionToNextLevelState>();
         }

@@ -46,7 +46,11 @@ namespace Infrastructure.Services.SoundService
                 return -1;
             }
 
-            return EazySoundManager.PlaySound(clip, volume, loop, sourceTransform);
+            int soundId = EazySoundManager.PlaySound(clip, volume, loop, sourceTransform);
+
+            await WaitForSoundToCompleteAsync(soundId);
+
+            return soundId;
         }
 
         public async UniTask<int> PlayUISoundAsync(string soundKey, float volume = 1f, int maxSimultaneousCount = -1)
@@ -95,6 +99,16 @@ namespace Infrastructure.Services.SoundService
             }
 
             return clip;
+        }
+
+        private static async UniTask WaitForSoundToCompleteAsync(int soundId)
+        {
+            await UniTask.WaitUntil(() =>
+            {
+                Audio audio = EazySoundManager.GetSoundAudio(soundId);
+
+                return audio == null || (!audio.IsPlaying && !audio.Paused);
+            });
         }
 
         private static string GetPath(string soundKey) =>
