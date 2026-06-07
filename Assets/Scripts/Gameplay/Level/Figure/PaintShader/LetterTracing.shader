@@ -4,8 +4,7 @@ Shader "Custom/LetterTracing"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
-        _FillColor ("Fill Color", Color) = (0.2, 0.8, 0.2, 1)
-        _Progress ("Progress", Range(0, 1)) = 0
+        _FillColor ("Fill Color", Color) = (1,1,1,1)
         _EdgeSoftness ("Edge Softness", Range(0, 0.05)) = 0.01
     }
 
@@ -25,129 +24,161 @@ Shader "Custom/LetterTracing"
         Pass
         {
             CGPROGRAM
+            #pragma target 3.0
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+
+            #define MAX_PARTS 32
+            #define MAX_PATH_POINTS 256
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Color;
             fixed4 _FillColor;
-            float _Progress;
             float _EdgeSoftness;
 
-            float4 _Waypoints[64];
-            int _WaypointCount;
+            float4 _PathPoints[MAX_PATH_POINTS];
+            float4 _PartData[MAX_PARTS];
+            float _PartProgress[MAX_PARTS];
+            int _PartCount;
 
             struct appdata
             {
-                float4 vertex   : POSITION;
-                float2 uv       : TEXCOORD0;
-                fixed4 color    : COLOR;
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+                fixed4 color : COLOR;
             };
 
             struct v2f
             {
-                float4 pos      : SV_POSITION;
-                float2 uv       : TEXCOORD0;
-                fixed4 color    : COLOR;
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                fixed4 color : COLOR;
             };
 
             v2f vert(appdata v)
             {
                 v2f o;
-                o.pos   = UnityObjectToClipPos(v.vertex);
-                o.uv    = TRANSFORM_TEX(v.uv, _MainTex);
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.color = v.color * _Color;
                 return o;
             }
 
-            // РџСЂРѕРµРєС†С–СЏ С‚РѕС‡РєРё P РЅР° РІС–РґСЂС–Р·РѕРє AB, РїРѕРІРµСЂС‚Р°С” t [0..1]
             float ProjectOnSegment(float2 P, float2 A, float2 B)
             {
-                float2 AB   = B - A;
-                float2 AP   = P - A;
+                float2 AB = B - A;
+                float2 AP = P - A;
                 float lenSq = dot(AB, AB);
-                if (lenSq < 0.00001) return 0;
+                if (lenSq < 0.00001)
+                {
+                    return 0;
+                }
+
                 return saturate(dot(AP, AB) / lenSq);
             }
 
-            // РџРѕРІРµСЂС‚Р°С” РіР»РѕР±Р°Р»СЊРЅРёР№ t [0..1] РІР·РґРѕРІР¶ С€Р»СЏС…Сѓ
-            // РґР»СЏ РЅР°Р№Р±Р»РёР¶С‡РѕС— С‚РѕС‡РєРё РґРѕ P (UV РєРѕРѕСЂРґРёРЅР°С‚Рё)
-            float GetPathT(float2 P)
+            void ProjectOnPart(float2 P, int startIndex, int pointCount, float totalLength, out float bestDistance, out float pathT)
             {
-                float bestDist  = 1e9;
-                float bestT     = 0;
-                float totalLen  = 0;
+                bestDistance = 1e9;
+                pathT = 0;
 
-                float segLengths[63];
-                for (int i = 0; i < _WaypointCount - 1; i++)
+                if (pointCount < 2 || totalLength < 0.00001)
                 {
-                    segLengths[i] = length(_Waypoints[i + 1].xy - _Waypoints[i].xy);
-                    totalLen += segLengths[i];
+                    return;
                 }
 
-                if (totalLen < 0.00001) return 0;
+                float accumulatedLength = 0;
 
-                float accLen = 0;
-
-                for (int j = 0; j < _WaypointCount - 1; j++)
+                for (int i = 0; i < MAX_PATH_POINTS; i++)
                 {
-                    float2 A = _Waypoints[j].xy;
-                    float2 B = _Waypoints[j + 1].xy;
-
-                    float  localT   = ProjectOnSegment(P, A, B);
-                    float2 closest  = lerp(A, B, localT);
-                    float  dist     = length(P - closest);
-
-                    if (dist < bestDist)
+                    if (i >= pointCount - 1)
                     {
-                        bestDist = dist;
-                        bestT    = (accLen + localT * segLengths[j]) / totalLen;
+                        break;
                     }
 
-                    accLen += segLengths[j];
-                }
+                    int pointIndex = startIndex + i;
+                    float2 A = _PathPoints[pointIndex].xy;
+                    float2 B = _PathPoints[pointIndex + 1].xy;
+                    float segmentLength = length(B - A);
 
-                return bestT;
+                    if (segmentLength < 0.00001)
+                    {
+                        continue;
+                    }
+
+                    float localT = ProjectOnSegment(P, A, B);
+                    float2 closest = lerp(A, B, localT);
+                    float distance = length(P - closest);
+
+                    if (distance < bestDistance)
+                    {
+                        bestDistance = distance;
+                        pathT = (accumulatedLength + localT * segmentLength) / totalLength;
+                    }
+
+                    accumulatedLength += segmentLength;
+                }
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 tex = tex2D(_MainTex, i.uv);
-
-                // РџС–РєСЃРµР»С– РїРѕР·Р° Р»С–С‚РµСЂРѕСЋ вЂ” РІС–РґРєРёРґР°С”РјРѕ
                 clip(tex.a - 0.1);
 
-                if (_WaypointCount < 2)
+                if (_PartCount < 1)
                 {
-                    fixed4 color = _FillColor;
-                    color.a = 0;
-                    return color;
+                    fixed4 emptyColor = _FillColor * i.color;
+                    emptyColor.a = 0;
+                    return emptyColor;
                 }
 
-                float pathT = GetPathT(i.uv);
+                float nearestDistance = 1e9;
+                float nearestPathT = 0;
+                float nearestProgress = 0;
 
-                // Soft alpha reveal along the traced path. Unreached pixels stay transparent.
-                float progress = saturate(_Progress);
+                for (int partIndex = 0; partIndex < MAX_PARTS; partIndex++)
+                {
+                    if (partIndex >= _PartCount)
+                    {
+                        break;
+                    }
+
+                    int startIndex = (int)_PartData[partIndex].x;
+                    int pointCount = (int)_PartData[partIndex].y;
+                    float totalLength = _PartData[partIndex].z;
+
+                    float partDistance;
+                    float partPathT;
+                    ProjectOnPart(i.uv, startIndex, pointCount, totalLength, partDistance, partPathT);
+
+                    if (partDistance < nearestDistance)
+                    {
+                        nearestDistance = partDistance;
+                        nearestPathT = partPathT;
+                        nearestProgress = saturate(_PartProgress[partIndex]);
+                    }
+                }
+
                 float softness = max(_EdgeSoftness, 0.00001);
                 float reveal = 1.0 - smoothstep(
-                    progress - softness,
-                    progress + softness,
-                    pathT
+                    nearestProgress - softness,
+                    nearestProgress + softness,
+                    nearestPathT
                 );
 
-                if (progress <= 0.00001)
+                if (nearestProgress <= 0.00001)
                 {
                     reveal = 0;
                 }
-                else if (progress >= 0.99999)
+                else if (nearestProgress >= 0.99999)
                 {
                     reveal = 1;
                 }
 
-                fixed4 color = _FillColor;
-                color.a = tex.a * i.color.a * _FillColor.a * reveal;
+                fixed4 color = _FillColor * i.color;
+                color.a = tex.a * color.a * reveal;
                 return color;
             }
 
