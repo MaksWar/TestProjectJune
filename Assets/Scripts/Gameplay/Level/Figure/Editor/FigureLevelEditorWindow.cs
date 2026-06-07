@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Gameplay.Level.Models.Public;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +13,9 @@ namespace Gameplay.Level.Editor
         private const string WindowTitle = "Figure Level Editor";
         private const string MenuPath = "Tools/Level/Figure Level Editor";
         private const string AssetPathPrefix = "Assets/";
-        private const string SavePathRoot = "AddressableAssets/InBuild/Levels";
+        private const string SavePathRoot = "Configs/Levels";
+        private const string LevelCatalogDirectory = "AddressableAssets/InBuild/Levels";
+        private const string LevelCatalogAssetName = "LevelCatalog.asset";
         private const int BezierSamplesPerSegment = 24;
         private const float DefaultHandleLength = 0.5f;
         private const float MinimumHandleLength = 0f;
@@ -44,6 +47,7 @@ namespace Gameplay.Level.Editor
         {
             SceneView.duringSceneGui += DrawSceneHandles;
             EnsureSavePathInitialized();
+            EnsureLevelIdInitialized();
         }
 
         private void OnDisable()
@@ -75,6 +79,7 @@ namespace Gameplay.Level.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 UpdateSavePathFromFigureType();
+                UpdateLevelIdFromFigureType();
             }
 
             savePath = EditorGUILayout.TextField("Save Path", NormalizeDisplayedSavePath(savePath));
@@ -501,7 +506,7 @@ namespace Gameplay.Level.Editor
             }
 
             SetSerializedField(figureComponent, "view", viewComponent);
-            SetSerializedField(figureComponent, "paths", pathComponents);
+            SetRuntimeField(figureComponent, "_paths", pathComponents);
 
             Selection.activeGameObject = previewRoot;
             SceneView.lastActiveSceneView?.FrameSelected();
@@ -664,6 +669,18 @@ namespace Gameplay.Level.Editor
 
             SetSerializedPropertyValue(property, value);
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetRuntimeField(object target, string fieldName, object value)
+        {
+            FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field == null)
+            {
+                Debug.LogError($"Runtime field '{fieldName}' was not found on {target.GetType().Name}.");
+                return;
+            }
+
+            field.SetValue(target, value);
         }
 
         private static void SetSerializedPropertyValue(SerializedProperty property, object value)
@@ -1015,6 +1032,7 @@ namespace Gameplay.Level.Editor
 
                 currentLevelAssetPath = targetPath;
                 AssetDatabase.Refresh();
+                UpdateLevelCatalog(targetPath);
 
                 Debug.Log($"Figure level saved to {targetPath}");
             }
@@ -1032,14 +1050,161 @@ namespace Gameplay.Level.Editor
             }
         }
 
+        private void EnsureLevelIdInitialized()
+        {
+            if (ShouldUseGeneratedLevelId(levelId))
+            {
+                UpdateLevelIdFromFigureType();
+            }
+        }
+
         private void UpdateSavePathFromFigureType()
         {
             savePath = GetBaseSavePath(figureType);
             currentLevelAssetPath = string.Empty;
         }
 
+        private void UpdateLevelIdFromFigureType()
+        {
+            levelId = GenerateNextLevelId(figureType);
+            currentLevelAssetPath = string.Empty;
+        }
+
         private static string GetBaseSavePath(FigureType type) =>
             $"{SavePathRoot}/{type}";
+
+        private static string GetLevelCatalogAssetPath() =>
+            $"{AssetPathPrefix}{LevelCatalogDirectory}/{LevelCatalogAssetName}";
+
+        private void UpdateLevelCatalog(string levelAssetPath)
+        {
+            LevelCatalog catalog = AssetDatabase.LoadAssetAtPath<LevelCatalog>(GetLevelCatalogAssetPath());
+            if (catalog == null)
+            {
+                Debug.LogWarning($"Level catalog was not found at '{GetLevelCatalogAssetPath()}'. JSON was saved, but catalog was not updated.");
+                return;
+            }
+
+            TextAsset jsonAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(levelAssetPath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning($"Saved level JSON was not imported as a TextAsset at '{levelAssetPath}'. Catalog was not updated.");
+                return;
+            }
+
+            Undo.RecordObject(catalog, "Update Level Catalog");
+            LevelGroupData group = GetOrCreateCatalogGroup(catalog, figureType);
+            UpsertCatalogLevel(group, levelId, jsonAsset);
+
+            EditorUtility.SetDirty(catalog);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static LevelGroupData GetOrCreateCatalogGroup(LevelCatalog catalog, FigureType type)
+        {
+            catalog.Groups ??= new List<LevelGroupData>();
+
+            LevelGroupData group = catalog.GetLevelGroupByType(type);
+            if (group != null)
+            {
+                group.Levels ??= new List<LevelData>();
+                return group;
+            }
+
+            group = new LevelGroupData
+            {
+                Type = type,
+                Levels = new List<LevelData>()
+            };
+
+            catalog.Groups.Add(group);
+            return group;
+        }
+
+        private static void UpsertCatalogLevel(LevelGroupData group, string id, TextAsset jsonAsset)
+        {
+            LevelData existingLevel = group.Levels.Find(level => level != null && level.Id == id);
+            if (existingLevel != null)
+            {
+                existingLevel.Json = jsonAsset;
+                existingLevel.Id = id;
+                RemoveDuplicateCatalogLevels(group, id, existingLevel);
+                return;
+            }
+
+            group.Levels.Add(new LevelData
+            {
+                Id = id,
+                Json = jsonAsset
+            });
+        }
+
+        private static void RemoveDuplicateCatalogLevels(LevelGroupData group, string id, LevelData keepLevel)
+        {
+            for (int i = group.Levels.Count - 1; i >= 0; i--)
+            {
+                LevelData level = group.Levels[i];
+                if (level != keepLevel && level != null && level.Id == id)
+                {
+                    group.Levels.RemoveAt(i);
+                }
+            }
+        }
+
+        private static string GenerateNextLevelId(FigureType type)
+        {
+            int nextId = GetLastLevelNumber(type) + 1;
+            return $"{type}_{nextId}";
+        }
+
+        private static int GetLastLevelNumber(FigureType type)
+        {
+            string assetDirectory = $"{AssetPathPrefix}{GetBaseSavePath(type)}";
+            if (Directory.Exists(assetDirectory) == false)
+            {
+                return 0;
+            }
+
+            string prefix = $"{type}_";
+            int lastLevelNumber = 0;
+
+            foreach (string filePath in Directory.GetFiles(assetDirectory, "*.json", SearchOption.TopDirectoryOnly))
+            {
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                if (fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    continue;
+                }
+
+                string idPart = fileName[prefix.Length..];
+                if (int.TryParse(idPart, out int levelNumber))
+                {
+                    lastLevelNumber = Mathf.Max(lastLevelNumber, levelNumber);
+                }
+            }
+
+            return lastLevelNumber;
+        }
+
+        private static bool ShouldUseGeneratedLevelId(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || id == "level_001")
+            {
+                return true;
+            }
+
+            foreach (FigureType type in Enum.GetValues(typeof(FigureType)))
+            {
+                string prefix = $"{type}_";
+                if (id.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+                    int.TryParse(id[prefix.Length..], out _))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private string GetAssetSaveDirectory()
         {

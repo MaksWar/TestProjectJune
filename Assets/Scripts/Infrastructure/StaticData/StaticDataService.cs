@@ -1,4 +1,3 @@
-﻿using System;
 using Cysharp.Threading.Tasks;
 
 namespace Infrastructure.StaticData
@@ -7,7 +6,6 @@ namespace Infrastructure.StaticData
     {
         public UniTask LoadAllAsync()
         {
-
             return UniTask.CompletedTask;
         }
     }

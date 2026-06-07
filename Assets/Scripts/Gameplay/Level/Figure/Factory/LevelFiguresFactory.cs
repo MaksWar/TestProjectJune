@@ -14,17 +14,20 @@ namespace Gameplay.Level
 
         private readonly IAssetsProvider _assetsProvider;
         private readonly ISpriteAtlasService _spriteAtlasService;
+        private readonly ILevelCatalogService _levelCatalogService;
         private readonly IInstantiator _instantiator;
         private readonly IFigurePointersFactory _pointersFactory;
 
         public LevelFiguresFactory(
             IAssetsProvider assetsProvider,
             ISpriteAtlasService spriteAtlasService,
+            ILevelCatalogService levelCatalogService,
             IInstantiator instantiator,
             IFigurePointersFactory pointersFactory)
         {
             _assetsProvider = assetsProvider;
             _spriteAtlasService = spriteAtlasService;
+            _levelCatalogService = levelCatalogService;
             _instantiator = instantiator;
             _pointersFactory = pointersFactory;
         }
@@ -62,26 +65,7 @@ namespace Gameplay.Level
 
         private async UniTask<LevelEntry> LoadLevelEntry(FigureType type, string id)
         {
-            string levelPath = GetLevelPath(type, id);
-            TextAsset levelAsset = await _assetsProvider.Load<TextAsset>(levelPath, GetType());
-
-            if (levelAsset == null)
-            {
-                Debug.LogError($"{nameof(LevelFiguresFactory)}: level JSON '{levelPath}' was not found.");
-                
-                return null;
-            }
-
-            LevelEntry levelEntry = JsonUtility.FromJson<LevelEntry>(levelAsset.text);
-
-            if (levelEntry == null)
-            {
-                Debug.LogError($"{nameof(LevelFiguresFactory)}: level JSON '{levelPath}' has invalid {nameof(LevelEntry)} data.");
-                
-                return null;
-            }
-
-            return levelEntry;
+            return await _levelCatalogService.LoadLevelEntry(type, id);
         }
 
         private void InitializeViews(FigureComponent figureComponent, LevelEntry levelEntry)
@@ -132,8 +116,5 @@ namespace Gameplay.Level
 
             return pointComponents;
         }
-
-        private string GetLevelPath(FigureType type, string id) =>
-            $"Levels/{type}/{id}.json";
     }
 }

@@ -1,11 +1,11 @@
 {
-    "LevelID": "level_1",
+    "LevelID": "Shape_2",
     "FigureId": "circle",
     "FigureType": 2,
     "ViewColor": {
-        "r": 0.572549045085907,
+        "r": 0.22675520181655885,
         "g": 0.0,
-        "b": 0.8235294818878174,
+        "b": 0.8313725590705872,
         "a": 1.0
     },
     "PathEntries": [

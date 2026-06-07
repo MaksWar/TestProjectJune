@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Gameplay.Level;
 using Gameplay.MetaGameplay.Player.Models.Private;
 using Infrastructure.AssetManagement;
 using Infrastructure.CompositionRoot.SubInstallers;
@@ -36,6 +37,7 @@ namespace Infrastructure.CompositionRoot
             Container.BindInterfacesTo<AssetsProvider>().AsSingle();
             
             Container.BindInterfacesTo<StaticDataService>().AsSingle();
+            Container.Bind<ILevelCatalogService>().To<LevelCatalogService>().AsSingle();
 
             Container.BindInterfacesTo<LogService>().AsSingle();
 
