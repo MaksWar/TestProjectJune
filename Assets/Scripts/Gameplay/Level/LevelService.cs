@@ -39,7 +39,7 @@ namespace Gameplay.Level
             await ActivateCurrentPath();
         }
 
-        public async UniTask ActivateCurrentPath()
+        public async UniTask ActivateCurrentPath(bool awaitAnimation = true)
         {
             if (HasCurrentPath() == false)
             {
@@ -55,11 +55,11 @@ namespace Gameplay.Level
             _currentFigure.LetterTracingController?.SetPartProgress(_currentPathIndex, 0f);
 
             await pointersHandler.CreatePathPointers(currentPath.Path);
-            await pointersHandler.ShowCurrentPath();
-
+            
             _currentPointerIndex = 0;
-
             ActivateCurrentPointer();
+            
+            await ShowCurrentPath(pointersHandler, awaitAnimation);
         }
 
         private void OnPointerInteracted(IDraggingInteractable interactable)
@@ -123,6 +123,19 @@ namespace Gameplay.Level
 
         private void ActivateCurrentPointer() =>
             _currentFigure.HandlerComponent.ActivatePointer(_currentPointerIndex);
+
+        private static UniTask ShowCurrentPath(PointersHandlerComponent pointersHandler, bool awaitAnimation)
+        {
+            UniTask showCurrentPathTask = pointersHandler.ShowCurrentPath();
+
+            if (awaitAnimation)
+            {
+                return showCurrentPathTask;
+            }
+
+            showCurrentPathTask.Forget();
+            return UniTask.CompletedTask;
+        }
 
         private void UpdateTracingProgress(int completedPointerIndex)
         {

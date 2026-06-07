@@ -33,9 +33,6 @@ namespace Infrastructure.Gameplay.States
         public async UniTask Enter()
         {
             GameplayLevelPayload payload = _gameplayContextService.LevelPayload;
-
-            _inputService.Disable();
-            
             FigureComponent figureComponent = await LoadLevel(payload);
 
             _loadingCurtain.Hide();

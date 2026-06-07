@@ -45,8 +45,6 @@ namespace Infrastructure.Gameplay.States
 
         public UniTask Exit()
         {
-            _inputService.Enable();
-            
             return UniTask.CompletedTask;
         }
     }
