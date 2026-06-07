@@ -41,14 +41,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _EdgeSoftness: 0.01
+    - _BrushNoiseScale: 28
+    - _BrushNoiseStrength: 0
+    - _BrushRadius: 0.14
+    - _BrushSoftness: 0.04
+    - _EdgeSoftness: 0.02
     - _EnableExternalAlpha: 0
     - _Progress: 0
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 0.3}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _FillColor: {r: 0.19999996, g: 0.8, b: 0.19999996, a: 1}
+    - _FillColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpriteMetricScale: {r: 1, g: 1, b: 0, a: 0}
+    - _SpriteUvRect: {r: 0, g: 0, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

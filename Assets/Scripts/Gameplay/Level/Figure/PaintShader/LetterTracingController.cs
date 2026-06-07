@@ -13,6 +13,11 @@ namespace Gameplay.Level.Figure.PaintShader
     public class LetterTracingController : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer viewSpriteRenderer;
+        [Header("Brush Feel")]
+        [SerializeField, Range(0.001f, 0.5f)] private float brushRadius = 0.14f;
+        [SerializeField, Range(0.001f, 0.2f)] private float brushSoftness = 0.04f;
+        [SerializeField, Range(0f, 0.08f)] private float brushNoiseStrength;
+        [SerializeField, Range(1f, 80f)] private float brushNoiseScale = 28f;
 
         private const int MaxParts = 32;
         private const int MaxPathPoints = 256;
@@ -21,6 +26,12 @@ namespace Gameplay.Level.Figure.PaintShader
         private static readonly int PartDataId = Shader.PropertyToID("_PartData");
         private static readonly int PartProgressId = Shader.PropertyToID("_PartProgress");
         private static readonly int PartCountId = Shader.PropertyToID("_PartCount");
+        private static readonly int SpriteUvRectId = Shader.PropertyToID("_SpriteUvRect");
+        private static readonly int SpriteMetricScaleId = Shader.PropertyToID("_SpriteMetricScale");
+        private static readonly int BrushRadiusId = Shader.PropertyToID("_BrushRadius");
+        private static readonly int BrushSoftnessId = Shader.PropertyToID("_BrushSoftness");
+        private static readonly int BrushNoiseStrengthId = Shader.PropertyToID("_BrushNoiseStrength");
+        private static readonly int BrushNoiseScaleId = Shader.PropertyToID("_BrushNoiseScale");
 
         private readonly List<TracePart> _parts = new();
         private readonly Vector4[] _pathPointArray = new Vector4[MaxPathPoints];
@@ -41,11 +52,15 @@ namespace Gameplay.Level.Figure.PaintShader
             if (viewSpriteRenderer != null)
             {
                 _material = viewSpriteRenderer.material;
+                ApplySpriteUvRectToShader();
+                ApplyBrushSettingsToShader();
             }
         }
 
         private void Start()
         {
+            ApplySpriteUvRectToShader();
+            ApplyBrushSettingsToShader();
             ApplyPartsToShader();
             UploadProgressToShader();
         }
@@ -72,6 +87,8 @@ namespace Gameplay.Level.Figure.PaintShader
             }
 
             _activePartIndex = 0;
+            ApplySpriteUvRectToShader();
+            ApplyBrushSettingsToShader();
             ApplyPartsToShader();
             UploadProgressToShader();
         }
@@ -82,6 +99,8 @@ namespace Gameplay.Level.Figure.PaintShader
             AddPart(localPath);
 
             _activePartIndex = 0;
+            ApplySpriteUvRectToShader();
+            ApplyBrushSettingsToShader();
             ApplyPartsToShader();
             UploadProgressToShader();
         }
@@ -137,6 +156,20 @@ namespace Gameplay.Level.Figure.PaintShader
         public void CompletePart(int partIndex) =>
             SetPartProgress(partIndex, 1f);
 
+        public void SetBrushSettings(
+            float radius,
+            float softness,
+            float noiseStrength,
+            float noiseScale)
+        {
+            brushRadius = Mathf.Clamp(radius, 0.001f, 0.5f);
+            brushSoftness = Mathf.Clamp(softness, 0.001f, 0.2f);
+            brushNoiseStrength = Mathf.Clamp(noiseStrength, 0f, 0.08f);
+            brushNoiseScale = Mathf.Clamp(noiseScale, 1f, 80f);
+
+            ApplyBrushSettingsToShader();
+        }
+
         private void ClearParts()
         {
             _parts.Clear();
@@ -176,7 +209,7 @@ namespace Gameplay.Level.Figure.PaintShader
             }
 
             part.PointCount = part.UvWaypoints.Count;
-            part.TotalLength = CalculateTotalLength(part.UvWaypoints);
+            part.TotalLength = CalculateTotalLength(part.UvWaypoints, GetSpriteMetricScale());
             _parts.Add(part);
         }
 
@@ -199,6 +232,36 @@ namespace Gameplay.Level.Figure.PaintShader
             _material.SetVectorArray(PathPointsId, _pathPointArray);
             _material.SetVectorArray(PartDataId, _partDataArray);
             _material.SetInt(PartCountId, partCount);
+        }
+
+        private void ApplyBrushSettingsToShader()
+        {
+            if (_material == null)
+            {
+                return;
+            }
+
+            _material.SetFloat(BrushRadiusId, brushRadius);
+            _material.SetFloat(BrushSoftnessId, brushSoftness);
+            _material.SetFloat(BrushNoiseStrengthId, brushNoiseStrength);
+            _material.SetFloat(BrushNoiseScaleId, brushNoiseScale);
+        }
+
+        private void ApplySpriteUvRectToShader()
+        {
+            if (_material == null)
+            {
+                return;
+            }
+
+            Vector4 spriteUvRect = new(0f, 0f, 1f, 1f);
+            if (viewSpriteRenderer != null && viewSpriteRenderer.sprite != null)
+            {
+                spriteUvRect = DataUtility.GetOuterUV(viewSpriteRenderer.sprite);
+            }
+
+            _material.SetVector(SpriteUvRectId, spriteUvRect);
+            _material.SetVector(SpriteMetricScaleId, GetSpriteMetricScale());
         }
 
         private void UploadProgressToShader()
@@ -236,14 +299,27 @@ namespace Gameplay.Level.Figure.PaintShader
 
             float normalizedU = (localPosition.x - bounds.min.x) / bounds.size.x;
             float normalizedV = (localPosition.y - bounds.min.y) / bounds.size.y;
-            Vector4 outerUv = DataUtility.GetOuterUV(sprite);
 
-            return new Vector2(
-                Mathf.Lerp(outerUv.x, outerUv.z, normalizedU),
-                Mathf.Lerp(outerUv.y, outerUv.w, normalizedV));
+            return new Vector2(normalizedU, normalizedV);
         }
 
-        private static float CalculateTotalLength(IReadOnlyList<Vector2> points)
+        private Vector2 GetSpriteMetricScale()
+        {
+            if (viewSpriteRenderer == null || viewSpriteRenderer.sprite == null)
+            {
+                return Vector2.one;
+            }
+
+            Bounds bounds = viewSpriteRenderer.sprite.bounds;
+            if (bounds.size.y <= 0f)
+            {
+                return Vector2.one;
+            }
+
+            return new Vector2(bounds.size.x / bounds.size.y, 1f);
+        }
+
+        private static float CalculateTotalLength(IReadOnlyList<Vector2> points, Vector2 metricScale)
         {
             if (points == null || points.Count < 2)
             {
@@ -253,7 +329,9 @@ namespace Gameplay.Level.Figure.PaintShader
             float totalLength = 0f;
             for (int i = 0; i < points.Count - 1; i++)
             {
-                totalLength += Vector2.Distance(points[i], points[i + 1]);
+                Vector2 from = Vector2.Scale(points[i], metricScale);
+                Vector2 to = Vector2.Scale(points[i + 1], metricScale);
+                totalLength += Vector2.Distance(from, to);
             }
 
             return totalLength;
@@ -274,7 +352,9 @@ namespace Gameplay.Level.Figure.PaintShader
                 _material = viewSpriteRenderer.material;
             }
 
+            ApplySpriteUvRectToShader();
             ApplyPartsToShader();
+            ApplyBrushSettingsToShader();
             UploadProgressToShader();
         }
 
@@ -321,12 +401,8 @@ namespace Gameplay.Level.Figure.PaintShader
         private static Vector2 UvToLocalPosition(Vector2 uv, Sprite sprite)
         {
             Bounds bounds = sprite.bounds;
-            Vector4 outerUv = DataUtility.GetOuterUV(sprite);
-            float normalizedU = Mathf.InverseLerp(outerUv.x, outerUv.z, uv.x);
-            float normalizedV = Mathf.InverseLerp(outerUv.y, outerUv.w, uv.y);
-
-            float x = bounds.min.x + normalizedU * bounds.size.x;
-            float y = bounds.min.y + normalizedV * bounds.size.y;
+            float x = bounds.min.x + uv.x * bounds.size.x;
+            float y = bounds.min.y + uv.y * bounds.size.y;
             return new Vector2(x, y);
         }
 #endif
