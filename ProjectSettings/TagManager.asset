@@ -49,5 +49,8 @@ TagManager:
   - name: Figure
     uniqueID: 3129022273
     locked: 0
+  - name: TutorialFingers
+    uniqueID: 2704299139
+    locked: 0
   m_RenderingLayers:
   - Default

@@ -93,14 +93,14 @@ MonoBehaviour:
     - levels
     - sprite_atlas
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ea1cfec4403d09940ba0f751a58b24ea
-    m_Address: HUD
+  - m_GUID: d385a4b6e26fcd040972093dcca49a07
+    m_Address: UI/MenuLevelsWindow.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d385a4b6e26fcd040972093dcca49a07
-    m_Address: UI/MenuLevelsWindow.prefab
+  - m_GUID: ea1cfec4403d09940ba0f751a58b24ea
+    m_Address: HUD
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

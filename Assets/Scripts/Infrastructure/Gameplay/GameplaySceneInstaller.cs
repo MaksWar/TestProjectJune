@@ -1,5 +1,6 @@
 using Infrastructure.Factories;
 using Gameplay.Level;
+using Infrastructure.Gameplay.Tips;
 using Infrastructure.Services.Input;
 using UnityEngine;
 using Zenject;
@@ -9,6 +10,7 @@ namespace Infrastructure.Gameplay
     public class GameplaySceneInstaller : MonoInstaller
     {
         [SerializeField] private Camera gameplayCamera;
+        [SerializeField] private GameplayTipSettings gameplayTipSettings = new();
 
         public override void InstallBindings()
         {
@@ -25,6 +27,8 @@ namespace Infrastructure.Gameplay
             Container.Bind<ILevelFiguresFactory>().To<LevelFiguresFactory>().AsSingle();
             Container.Bind<IFigurePointersFactory>().To<FigurePointersFactory>().AsSingle();
             Container.Bind<ILevelLoader>().To<LevelLoader>().AsSingle();
+            Container.Bind<GameplayTipSettings>().FromInstance(gameplayTipSettings).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameplayTipsService>().AsSingle();
             BindInputService();
         }
 

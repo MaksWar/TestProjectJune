@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using Infrastructure.Gameplay;
 using Infrastructure.Gameplay.States;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gameplay.Level
 {
@@ -17,6 +19,9 @@ namespace Gameplay.Level
         {
             _sceneStateMachine = sceneStateMachine;
         }
+
+        public IReadOnlyList<Vector2> CurrentPathPositions =>
+            HasCurrentPath() ? _currentFigure.Paths[_currentPathIndex].Path : null;
 
         public async UniTask Activate(FigureComponent figureComponent)
         {
@@ -112,7 +117,7 @@ namespace Gameplay.Level
         }
 
         private bool HasCurrentPath() =>
-            _currentPathIndex < _currentFigure.Paths.Count;
+            _currentFigure?.Paths != null && _currentPathIndex < _currentFigure.Paths.Count;
 
         private void ActivateCurrentPointer() =>
             _currentFigure.HandlerComponent.ActivatePointer(_currentPointerIndex);
