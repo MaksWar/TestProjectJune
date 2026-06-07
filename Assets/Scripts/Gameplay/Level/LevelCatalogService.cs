@@ -8,7 +8,7 @@ namespace Gameplay.Level
 {
     public class LevelCatalogService : ILevelCatalogService
     {
-        private const string LevelCatalogPath = AssetsPath.LevelCatalog;
+        private const string LevelCatalogPath = "Levels/LevelCatalog.asset";
 
         private readonly IAssetsProvider _assetsProvider;
         private LevelCatalog _catalog;
@@ -37,11 +37,6 @@ namespace Gameplay.Level
 
             LevelData levelData = _catalog?.GetLevelData(type, id);
             TextAsset levelJson = levelData?.Json;
-            
-            if (levelJson == null)
-            {
-                levelJson = await LoadLevelAssetByPath(type, id);
-            }
 
             return DeserializeLevelEntry(type, id, levelJson);
         }
@@ -62,34 +57,21 @@ namespace Gameplay.Level
             }
         }
 
-        private async UniTask<TextAsset> LoadLevelAssetByPath(FigureType type, string id)
-        {
-            return await _assetsProvider.Load<TextAsset>(GetLevelPath(type, id), GetType());
-        }
-
         private LevelEntry DeserializeLevelEntry(FigureType type, string id, TextAsset levelJson)
         {
             if (levelJson == null)
             {
                 Debug.LogError($"{nameof(LevelCatalogService)}: level JSON for '{type}/{id}' was not found.");
+                
                 return null;
             }
 
             LevelEntry levelEntry = JsonUtility.FromJson<LevelEntry>(levelJson.text);
-
-            if (levelEntry == null)
-            {
-                Debug.LogError($"{nameof(LevelCatalogService)}: level JSON for '{type}/{id}' has invalid {nameof(LevelEntry)} data.");
-                return null;
-            }
 
             levelEntry.LevelID = id;
             levelEntry.FigureType = type;
 
             return levelEntry;
         }
-
-        private static string GetLevelPath(FigureType type, string id) =>
-            $"Configs/Levels/{type}/{id}.json";
     }
 }
