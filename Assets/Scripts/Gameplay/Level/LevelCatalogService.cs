@@ -31,6 +31,34 @@ namespace Gameplay.Level
             return levelData != null;
         }
 
+        public async UniTask<LevelData> GetNextLevel(FigureType type, string currentId)
+        {
+            await LoadCatalogIfNeeded();
+
+            IReadOnlyList<LevelData> levels = GetLevels(type);
+            if (levels.Count == 0)
+            {
+                Debug.LogError($"{nameof(LevelCatalogService)}: no levels were found for '{type}'.");
+
+                return null;
+            }
+
+            int currentIndex = -1;
+            for (int i = 0; i < levels.Count; i++)
+            {
+                if (levels[i] != null && levels[i].Id == currentId)
+                {
+                    currentIndex = i;
+
+                    break;
+                }
+            }
+
+            int nextIndex = (currentIndex + 1) % levels.Count;
+
+            return levels[nextIndex];
+        }
+
         public async UniTask<LevelEntry> LoadLevelEntry(FigureType type, string id)
         {
             await LoadCatalogIfNeeded();

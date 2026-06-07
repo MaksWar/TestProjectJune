@@ -8,6 +8,7 @@ namespace Gameplay.Level
     {
         IReadOnlyList<LevelData> GetLevels(FigureType type);
         bool TryGetLevel(FigureType type, string id, out LevelData levelData);
+        UniTask<LevelData> GetNextLevel(FigureType type, string currentId);
         UniTask<LevelEntry> LoadLevelEntry(FigureType type, string id);
     }
 }

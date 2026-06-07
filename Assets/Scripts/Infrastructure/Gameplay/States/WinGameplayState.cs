@@ -5,20 +5,19 @@ namespace Infrastructure.Gameplay.States
 {
     public class WinGameplayState : IState
     {
-        public WinGameplayState()
+        private readonly SceneStateMachine _sceneStateMachine;
+
+        public WinGameplayState(SceneStateMachine sceneStateMachine)
         {
+            _sceneStateMachine = sceneStateMachine;
         }
 
         public async UniTask Enter()
         {
+            await _sceneStateMachine.Enter<TransitionToNextLevelState>();
         }
 
-        private async UniTask OpenWinWindow()
-        {
-        }
-
-        public async UniTask Exit()
-        {
-        }
+        public UniTask Exit() =>
+            UniTask.CompletedTask;
     }
 }

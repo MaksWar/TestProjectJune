@@ -1,13 +1,22 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using Infrastructure.Gameplay;
+using Infrastructure.Gameplay.States;
 
 namespace Gameplay.Level
 {
     public class LevelService
     {
+        private readonly SceneStateMachine _sceneStateMachine;
+
         private FigureComponent _currentFigure;
 
         private int _currentPathIndex;
         private int _currentPointerIndex;
+
+        public LevelService(SceneStateMachine sceneStateMachine)
+        {
+            _sceneStateMachine = sceneStateMachine;
+        }
 
         public async UniTask Activate(FigureComponent figureComponent)
         {
@@ -26,6 +35,8 @@ namespace Gameplay.Level
         {
             if (HasCurrentPath() == false)
             {
+                await _sceneStateMachine.Enter<WinGameplayState>();
+                
                 return;
             }
 

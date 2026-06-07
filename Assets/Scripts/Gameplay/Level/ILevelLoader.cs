@@ -5,5 +5,6 @@ namespace Gameplay.Level
     public interface ILevelLoader
     {
         UniTask<FigureComponent> LoadLevel(FigureType type, string id);
+        void UnLoadCurrentLevel();
     }
 }

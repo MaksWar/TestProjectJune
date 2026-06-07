@@ -43,6 +43,7 @@ namespace Gameplay.Level
             }
 
             GameObject figureObject = _instantiator.InstantiatePrefab(prefab);
+            figureObject.name = levelEntry.LevelID;
             figureObject.transform.position = Vector2.zero;
             figureObject.transform.rotation = Quaternion.identity;
             figureObject.transform.localScale = Vector3.one;

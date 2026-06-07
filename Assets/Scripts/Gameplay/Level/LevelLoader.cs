@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Gameplay.Level
 {
@@ -6,6 +7,8 @@ namespace Gameplay.Level
     {
         private readonly ILevelFiguresFactory _levelFiguresFactory;
         private readonly LevelService _levelService;
+
+        private FigureComponent _currentFigure;
 
         public LevelLoader(ILevelFiguresFactory levelFiguresFactory, LevelService levelService)
         {
@@ -15,11 +18,22 @@ namespace Gameplay.Level
 
         public async UniTask<FigureComponent> LoadLevel(FigureType type, string id)
         {
-            FigureComponent figureComponent = await _levelFiguresFactory.CreateFigure(type, id);
+            _currentFigure = await _levelFiguresFactory.CreateFigure(type, id);
 
-            await _levelService.Activate(figureComponent);
+            await _levelService.Activate(_currentFigure);
 
-            return figureComponent;
+            return _currentFigure;
+        }
+
+        public void UnLoadCurrentLevel()
+        {
+            if (_currentFigure == null)
+            {
+                return;
+            }
+
+            Object.Destroy(_currentFigure.gameObject);
+            _currentFigure = null;
         }
     }
 }
