@@ -14,6 +14,7 @@ namespace Infrastructure.Services.Input
         private Vector2 _worldPosition;
         private bool _isPressed;
         private bool _isDragging;
+        private bool _isEnabled = true;
 
         public event Action<InputPointerData> Pressed;
         public event Action<InputPointerData> Released;
@@ -22,6 +23,7 @@ namespace Infrastructure.Services.Input
         public event Action<InputPointerData> Dragged;
         public event Action<InputPointerData> DragEnded;
 
+        public bool IsEnabled => _isEnabled;
         public bool IsPressed => _isPressed;
         public Vector2 ScreenPosition => _screenPosition;
         public Vector2 WorldPosition => _worldPosition;
@@ -32,6 +34,11 @@ namespace Infrastructure.Services.Input
 
         public void Tick()
         {
+            if (!_isEnabled)
+            {
+                return;
+            }
+
             if (!TryGetPointerState(out PointerInputState pointerState))
             {
                 return;
@@ -53,7 +60,7 @@ namespace Infrastructure.Services.Input
                 UpdateDragState();
             }
 
-            if (pointerState.WasReleasedThisFrame)
+            if (pointerState.WasReleasedThisFrame && _isPressed)
             {
                 InputPointerData pointerData = CreatePointerData();
 
@@ -70,6 +77,16 @@ namespace Infrastructure.Services.Input
                 _isPressed = false;
                 _isDragging = false;
             }
+        }
+
+        public void Enable() =>
+            _isEnabled = true;
+
+        public void Disable()
+        {
+            _isEnabled = false;
+            _isPressed = false;
+            _isDragging = false;
         }
 
         protected abstract bool TryGetPointerState(out PointerInputState pointerState);

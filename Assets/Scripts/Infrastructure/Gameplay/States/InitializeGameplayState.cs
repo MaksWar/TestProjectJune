@@ -1,6 +1,7 @@
 using Gameplay.Level;
 using Infrastructure.States;
 using Cysharp.Threading.Tasks;
+using Infrastructure.Services.Input;
 using Infrastructure.UI.LoadingCurtain;
 using UnityEngine;
 
@@ -8,30 +9,38 @@ namespace Infrastructure.Gameplay.States
 {
     public class InitializeGameplayState : IState
     {
+        private readonly ILevelLoader _levelLoader;
+        private readonly IInputService _inputService;
         private readonly SceneStateMachine _stateMachine;
         private readonly ILoadingCurtain _loadingCurtain;
-        private readonly ILevelLoader _levelLoader;
         private readonly IGameplayContextService _gameplayContextService;
 
         public InitializeGameplayState(
             SceneStateMachine stateMachine,
             ILoadingCurtain loadingCurtain,
             ILevelLoader levelLoader,
-            IGameplayContextService gameplayContextService)
+            IGameplayContextService gameplayContextService,
+            IInputService inputService
+            )
         {
+            _levelLoader = levelLoader;
+            _inputService = inputService;
             _stateMachine = stateMachine;
             _loadingCurtain = loadingCurtain;
-            _levelLoader = levelLoader;
             _gameplayContextService = gameplayContextService;
         }
 
         public async UniTask Enter()
         {
-            await LoadLevel();
+            GameplayLevelPayload payload = _gameplayContextService.LevelPayload;
+
+            _inputService.Disable();
+            
+            await LoadLevel(payload);
 
             _loadingCurtain.Hide();
             
-            await _stateMachine.Enter<PresentationGameplayState>();
+            await _stateMachine.Enter<PresentationGameplayState, GameplayLevelPayload>(payload);
         }
 
         public UniTask Exit()
@@ -39,10 +48,8 @@ namespace Infrastructure.Gameplay.States
             return UniTask.CompletedTask;
         }
 
-        private async UniTask LoadLevel()
+        private async UniTask LoadLevel(GameplayLevelPayload payload)
         {
-            GameplayLevelPayload payload = _gameplayContextService.LevelPayload;
-
             await _levelLoader.LoadLevel(payload.FigureType, payload.LevelId);
         }
     }

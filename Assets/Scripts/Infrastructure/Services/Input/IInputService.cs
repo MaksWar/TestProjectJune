@@ -12,8 +12,12 @@ namespace Infrastructure.Services.Input
         event Action<InputPointerData> Dragged;
         event Action<InputPointerData> DragEnded;
 
+        bool IsEnabled { get; }
         bool IsPressed { get; }
         Vector2 ScreenPosition { get; }
         Vector2 WorldPosition { get; }
+
+        void Enable();
+        void Disable();
     }
 }
