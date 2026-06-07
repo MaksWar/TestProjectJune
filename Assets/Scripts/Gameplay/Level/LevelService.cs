@@ -32,6 +32,8 @@ namespace Gameplay.Level
             PointersHandlerComponent pointersHandler = _currentFigure.HandlerComponent;
             PathComponent currentPath = _currentFigure.Paths[_currentPathIndex];
 
+            _currentFigure.LetterTracingController?.InitializePath(currentPath.Path);
+
             await pointersHandler.CreatePathPointers(currentPath.Path);
             pointersHandler.ShowCurrentPath();
 
@@ -55,6 +57,8 @@ namespace Gameplay.Level
             FigurePointerComponent pointerComponent = _currentFigure.HandlerComponent.GetPointer(_currentPointerIndex);
             pointerComponent.Deactivate();
             pointerComponent.Hide();
+
+            UpdateTracingProgress(_currentPointerIndex);
             
             _currentPointerIndex++;
 
@@ -98,6 +102,14 @@ namespace Gameplay.Level
 
         private void ActivateCurrentPointer() =>
             _currentFigure.HandlerComponent.ActivatePointer(_currentPointerIndex);
+
+        private void UpdateTracingProgress(int completedPointerIndex)
+        {
+            int pointerCount = _currentFigure.HandlerComponent.Pointers.Count;
+            float progress = pointerCount <= 1 ? 1f : (float)completedPointerIndex / (pointerCount - 1);
+
+            _currentFigure.LetterTracingController?.SetProgress(progress);
+        }
 
         private void SubscribeCurrentFigure() =>
             _currentFigure.InteractionHandlerComponent.Interacted += OnPointerInteracted;

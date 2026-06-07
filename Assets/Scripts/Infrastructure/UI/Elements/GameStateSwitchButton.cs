@@ -45,7 +45,7 @@ namespace Infrastructure.UI.Elements
                 case TargetStates.Loading: gameStateMachine.Enter<GameLoadDataState>().Forget(); break;
                 case TargetStates.Gameplay:
                     gameStateMachine.Enter<GameplayLoadState, GameplayLevelPayload>(
-                        new GameplayLevelPayload(FigureType.Shape, "level_1")).Forget();
+                        new GameplayLevelPayload(FigureType.Letter, "level_001")).Forget();
                     break;
                 default: log.LogError("Not valid option"); break;
             }

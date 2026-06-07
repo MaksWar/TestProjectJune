@@ -52,7 +52,7 @@ namespace Gameplay.Level
                 return null;
             }
 
-            InitializeView(figureComponent, levelEntry);
+            InitializeViews(figureComponent, levelEntry);
 
             List<PathComponent> pathComponents = CreatePaths(figureObject.transform, levelEntry);
             figureComponent.Initialize(levelEntry, pathComponents);
@@ -84,11 +84,12 @@ namespace Gameplay.Level
             return levelEntry;
         }
 
-        private void InitializeView(FigureComponent figureComponent, LevelEntry levelEntry)
+        private void InitializeViews(FigureComponent figureComponent, LevelEntry levelEntry)
         {
             Sprite sprite = _spriteAtlasService.GetSprite(levelEntry.FigureId, SpriteAtlasService.LevelsLabel);
 
             figureComponent.View.Initialize(sprite, levelEntry.ViewColor);
+            figureComponent.BackgroundView.Initialize(sprite, new Color(1f, 1f, 1f, 0.15f));
         }
 
         private static List<PathComponent> CreatePaths(Transform root, LevelEntry levelEntry)

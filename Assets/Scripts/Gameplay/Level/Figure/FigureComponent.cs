@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.Level.Figure.PaintShader;
 using Gameplay.Level.Models.Public;
 using UnityEngine;
 
@@ -7,8 +8,10 @@ namespace Gameplay.Level
     public class FigureComponent : MonoBehaviour
     {
         [SerializeField] private ViewComponent view;
+        [SerializeField] private ViewComponent backgroundView;
         [SerializeField] private PointersHandlerComponent pointersHandlerComponent;
         [SerializeField] private InteractionHandlerComponent interactionHandlerComponent;
+        [SerializeField] private LetterTracingController letterTracingController;
 
         private string _levelId;
         private string _figureId;
@@ -17,8 +20,10 @@ namespace Gameplay.Level
         
         public List<PathComponent> Paths => _paths;
         public ViewComponent View => view;
+        public ViewComponent BackgroundView => backgroundView;
         public PointersHandlerComponent HandlerComponent => pointersHandlerComponent;
         public InteractionHandlerComponent InteractionHandlerComponent => interactionHandlerComponent;
+        public LetterTracingController LetterTracingController => letterTracingController;
 
         public void Initialize(LevelEntry levelEntry, List<PathComponent> pathComponents)
         {
