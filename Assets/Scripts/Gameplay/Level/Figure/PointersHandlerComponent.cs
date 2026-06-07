@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -8,6 +7,8 @@ namespace Gameplay.Level
 {
     public class PointersHandlerComponent : MonoBehaviour
     {
+        [SerializeField] private PointersHandlerAnimationComponent pointersHandlerAnimationComponent;
+        
         private readonly List<FigurePointerComponent> _pointers = new();
 
         private IFigurePointersFactory _pointersFactory;
@@ -18,32 +19,14 @@ namespace Gameplay.Level
 
         public IReadOnlyList<FigurePointerComponent> Pointers => _pointers;
 
+        private void Awake() =>
+            EnsurePointersHandlerAnimation(true);
+
         public UniTask CreatePathPointers(List<Vector2> positions) =>
             CreatePathPointersAsync(positions);
 
-        public void ShowCurrentPath()
-        {
-            foreach (FigurePointerComponent pointer in _pointers)
-            {
-                pointer?.Show();
-            }
-        }
-
-        public void HideCurrentPath()
-        {
-            foreach (FigurePointerComponent pointer in _pointers)
-            {
-                pointer?.Hide();
-            }
-        }
-
-        public void ActivateCurrentPath()
-        {
-            foreach (FigurePointerComponent pointer in _pointers)
-            {
-                pointer?.Activate();
-            }
-        }
+        public UniTask ShowCurrentPath() =>
+            pointersHandlerAnimationComponent.ShowCurrentPath(_pointers);
 
         public void DeactivateCurrentPath()
         {
@@ -84,16 +67,26 @@ namespace Gameplay.Level
                 return;
             }
 
+            List<UniTask<FigurePointerComponent>> createPointerTasks = new(positions.Count);
+
             for (int i = 0; i < positions.Count; i++)
             {
                 PointerType pointerType = i == positions.Count - 1 ? PointerType.Final : PointerType.Default;
-                await CreateAndStorePointer(positions[i], pointerType);
+                createPointerTasks.Add(CreatePointer(positions[i], pointerType));
+            }
+
+            FigurePointerComponent[] pointers = await UniTask.WhenAll(createPointerTasks);
+            foreach (FigurePointerComponent pointer in pointers)
+            {
+                StorePointer(pointer);
             }
         }
 
-        private async UniTask CreateAndStorePointer(Vector2 position, PointerType pointerType)
+        private async UniTask<FigurePointerComponent> CreatePointer(Vector2 position, PointerType pointerType) =>
+            await _pointersFactory.CreatePointer(pointerType, position, transform);
+
+        private void StorePointer(FigurePointerComponent pointer)
         {
-            FigurePointerComponent pointer = await _pointersFactory.CreatePointer(pointerType, position, transform);
             if (pointer == null)
             {
                 return;
@@ -117,5 +110,28 @@ namespace Gameplay.Level
 
             _pointers.Clear();
         }
+
+        #region Editor
+
+        private void OnValidate()
+        {
+            EnsurePointersHandlerAnimation(false);
+        }
+
+        private void EnsurePointersHandlerAnimation(bool addIfMissing)
+        {
+            if (pointersHandlerAnimationComponent != null)
+            {
+                return;
+            }
+
+            pointersHandlerAnimationComponent = GetComponentInChildren<PointersHandlerAnimationComponent>();
+            if (pointersHandlerAnimationComponent == null && addIfMissing)
+            {
+                pointersHandlerAnimationComponent = gameObject.AddComponent<PointersHandlerAnimationComponent>();
+            }
+        }
+
+        #endregion
     }
 }

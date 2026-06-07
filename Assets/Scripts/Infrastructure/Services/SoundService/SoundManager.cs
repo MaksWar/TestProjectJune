@@ -7,7 +7,7 @@ namespace Infrastructure.Services.SoundService
 {
     public class SoundManager
     {
-        private const string SoundAssetFolder = "InBuild/Sounds/";
+        private const string SoundAssetFolder = "Sounds/";
 
         private readonly IAssetsProvider _assetsProvider;
 

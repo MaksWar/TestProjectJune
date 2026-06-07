@@ -35,6 +35,8 @@ namespace Gameplay.LevelMenu
             Clear();
 
             IReadOnlyList<LevelGroupData> groups = await _levelCatalogService.GetGroupsAsync();
+            List<UniTask<CategoriesGroupViewComponent>> createCategoryGroupTasks = new();
+
             foreach (LevelGroupData group in groups)
             {
                 if (group?.Levels == null || group.Levels.Count == 0)
@@ -42,9 +44,16 @@ namespace Gameplay.LevelMenu
                     continue;
                 }
 
-                CategoriesGroupViewComponent categoryGroup = await CreateCategoryGroupAsync(group);
+                createCategoryGroupTasks.Add(CreateCategoryGroupAsync(group));
+            }
 
-                _categoryGroups.Add(categoryGroup);
+            CategoriesGroupViewComponent[] categoryGroups = await UniTask.WhenAll(createCategoryGroupTasks);
+            foreach (CategoriesGroupViewComponent categoryGroup in categoryGroups)
+            {
+                if (categoryGroup != null)
+                {
+                    _categoryGroups.Add(categoryGroup);
+                }
             }
         }
 
@@ -53,11 +62,13 @@ namespace Gameplay.LevelMenu
             AsyncInstantiateOperation<CategoriesGroupViewComponent> operation = InstantiateAsync(
                 CategoriesGroupViewComponentPrefab,
                 CategoriesGroupViewContainer);
+
             await operation.ToUniTask();
 
             CategoriesGroupViewComponent categoryGroup = operation.Result[0];
 
-            List<LevelViewComponent> levelViews = new();
+            List<UniTask<LevelViewComponent>> createLevelViewTasks = new();
+
             foreach (LevelData levelData in group.Levels)
             {
                 if (levelData == null || string.IsNullOrWhiteSpace(levelData.Id))
@@ -65,15 +76,17 @@ namespace Gameplay.LevelMenu
                     continue;
                 }
 
-                LevelEntry levelEntry = await _levelCatalogService.LoadLevelEntry(group.Type, levelData.Id);
-                if (levelEntry == null)
+                createLevelViewTasks.Add(CreateLevelViewAsync(group.Type, levelData.Id, categoryGroup.LevelViewContainer));
+            }
+
+            List<LevelViewComponent> levelViews = new();
+            LevelViewComponent[] createdLevelViews = await UniTask.WhenAll(createLevelViewTasks);
+            foreach (LevelViewComponent levelView in createdLevelViews)
+            {
+                if (levelView != null)
                 {
-                    continue;
+                    levelViews.Add(levelView);
                 }
-
-                LevelViewComponent levelView = await CreateLevelViewAsync(levelEntry, categoryGroup.LevelViewContainer);
-
-                levelViews.Add(levelView);
             }
 
             categoryGroup.Initialize(group.Type, levelViews);
@@ -108,6 +121,17 @@ namespace Gameplay.LevelMenu
             levelView.OnClick += OnLevelSelected;
 
             return levelView;
+        }
+
+        private async UniTask<LevelViewComponent> CreateLevelViewAsync(FigureType type, string id, Transform parent)
+        {
+            LevelEntry levelEntry = await _levelCatalogService.LoadLevelEntry(type, id);
+            if (levelEntry == null)
+            {
+                return null;
+            }
+
+            return await CreateLevelViewAsync(levelEntry, parent);
         }
 
         private void OnLevelSelected(FigureType type, string id)

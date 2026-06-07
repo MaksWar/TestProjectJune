@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Gameplay.Level;
 using Gameplay.Level.Presentation;
 using Infrastructure.Services.Input;
 using Infrastructure.Services.SoundService;
@@ -12,21 +12,25 @@ namespace Infrastructure.Gameplay.States
         private readonly ISoundService _soundService;
         private readonly IInputService _inputService;
         private readonly SceneStateMachine _sceneStateMachine;
+        private readonly LevelService _levelService;
 
         public PresentationGameplayState(
             SceneStateMachine sceneStateMachine,
             ISoundService soundService,
-            IInputService inputService
+            IInputService inputService,
+            LevelService levelService
         )
         {
             _sceneStateMachine = sceneStateMachine;
             _soundService = soundService;
             _inputService = inputService;
+            _levelService = levelService;
         }
 
         public async UniTask Enter(GameplayLevelPayload payload)
         {
             await _soundService.PlaySoundAsync(PresentationSoundsMap.PresentationSoundByType[payload.FigureType]);
+            await _levelService.Activate(payload.FigureComponent);
 
             _sceneStateMachine.Enter<GameLoopState>().Forget();
         }

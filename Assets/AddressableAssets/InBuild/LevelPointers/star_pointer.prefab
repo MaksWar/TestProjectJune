@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40a4e9f2ae2042c3ba4ce47bfe75ae9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewObject: {fileID: 7012599846405201141}
   figurePointerType: 1
   interactionObserverComponent: {fileID: 3184741028042506226}
+  pointerAnimationComponent: {fileID: 793239829502490863}
 --- !u!1 &7012599846405201141
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,9 +57,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3156106208405110664}
+  - component: {fileID: 793239829502490863}
+  - component: {fileID: 3184741028042506226}
   - component: {fileID: 2182443968627009905}
   - component: {fileID: 2068796577392319170}
-  - component: {fileID: 3184741028042506226}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -82,6 +83,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 678495023026413078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &793239829502490863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012599846405201141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799d21ee0e3528542bca315b7871508d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 2182443968627009905}
+  startTransparency: 0
+  targetTransparency: 0.9
+--- !u!114 &3184741028042506226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012599846405201141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c14638ce7b414f8cac4bd53c701f97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionCollider: {fileID: 2068796577392319170}
 --- !u!212 &2182443968627009905
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -173,16 +202,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.525
---- !u!114 &3184741028042506226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7012599846405201141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8c14638ce7b414f8cac4bd53c701f97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionCollider: {fileID: 2068796577392319170}

@@ -6,21 +6,17 @@ namespace Gameplay.Level
     public class LevelLoader : ILevelLoader
     {
         private readonly ILevelFiguresFactory _levelFiguresFactory;
-        private readonly LevelService _levelService;
 
         private FigureComponent _currentFigure;
 
-        public LevelLoader(ILevelFiguresFactory levelFiguresFactory, LevelService levelService)
+        public LevelLoader(ILevelFiguresFactory levelFiguresFactory)
         {
             _levelFiguresFactory = levelFiguresFactory;
-            _levelService = levelService;
         }
 
         public async UniTask<FigureComponent> LoadLevel(FigureType type, string id)
         {
             _currentFigure = await _levelFiguresFactory.CreateFigure(type, id);
-
-            await _levelService.Activate(_currentFigure);
 
             return _currentFigure;
         }

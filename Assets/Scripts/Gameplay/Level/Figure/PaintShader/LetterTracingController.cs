@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Sprites;
 
@@ -18,6 +19,9 @@ namespace Gameplay.Level.Figure.PaintShader
         [SerializeField, Range(0.001f, 0.2f)] private float brushSoftness = 0.04f;
         [SerializeField, Range(0f, 0.08f)] private float brushNoiseStrength;
         [SerializeField, Range(1f, 80f)] private float brushNoiseScale = 28f;
+        [Header("Progress Fill")]
+        [SerializeField] private bool smoothProgressFill = true;
+        [SerializeField, Min(0f)] private float smoothProgressFillDuration = 0.15f;
 
         private const int MaxParts = 32;
         private const int MaxPathPoints = 256;
@@ -37,6 +41,7 @@ namespace Gameplay.Level.Figure.PaintShader
         private readonly Vector4[] _pathPointArray = new Vector4[MaxPathPoints];
         private readonly Vector4[] _partDataArray = new Vector4[MaxParts];
         private readonly float[] _partProgressArray = new float[MaxParts];
+        private readonly Tween[] _progressTweens = new Tween[MaxParts];
 
         private Material _material;
         private int _pathPointCount;
@@ -44,14 +49,10 @@ namespace Gameplay.Level.Figure.PaintShader
 
         private void Awake()
         {
-            if (viewSpriteRenderer == null)
-            {
-                viewSpriteRenderer = GetComponent<SpriteRenderer>();
-            }
-
             if (viewSpriteRenderer != null)
             {
                 _material = viewSpriteRenderer.material;
+
                 ApplySpriteUvRectToShader();
                 ApplyBrushSettingsToShader();
             }
@@ -93,18 +94,6 @@ namespace Gameplay.Level.Figure.PaintShader
             UploadProgressToShader();
         }
 
-        public void InitializePath(IReadOnlyList<Vector2> localPath)
-        {
-            ClearParts();
-            AddPart(localPath);
-
-            _activePartIndex = 0;
-            ApplySpriteUvRectToShader();
-            ApplyBrushSettingsToShader();
-            ApplyPartsToShader();
-            UploadProgressToShader();
-        }
-
         public void SetActivePart(int partIndex)
         {
             if (_parts.Count == 0)
@@ -119,14 +108,54 @@ namespace Gameplay.Level.Figure.PaintShader
         public void SetProgress(float progress) =>
             SetPartProgress(_activePartIndex, progress);
 
-        public void SetPartProgress(int partIndex, float progress)
+        public void SetPartProgress(int partIndex, float progress) =>
+            SetPartProgress(partIndex, progress, smoothProgressFill);
+
+        public void SetPartProgress(int partIndex, float progress, bool smooth)
         {
             if (partIndex < 0 || partIndex >= _parts.Count)
             {
                 return;
             }
 
-            _parts[partIndex].Progress = Mathf.Clamp01(progress);
+            float targetProgress = Mathf.Clamp01(progress);
+            KillProgressTween(partIndex);
+
+            if (smooth == false || smoothProgressFillDuration <= 0f || Application.isPlaying == false)
+            {
+                SetPartProgressImmediate(partIndex, targetProgress);
+                return;
+            }
+
+            float currentProgress = _parts[partIndex].Progress;
+            if (Mathf.Approximately(currentProgress, targetProgress))
+            {
+                SetPartProgressImmediate(partIndex, targetProgress);
+                return;
+            }
+
+            Tween progressTween = null;
+            progressTween = DOVirtual.Float(
+                    currentProgress,
+                    targetProgress,
+                    smoothProgressFillDuration,
+                    value => SetPartProgressImmediate(partIndex, value))
+                .SetEase(Ease.OutQuad)
+                .SetLink(gameObject)
+                .OnKill(() =>
+                {
+                    if (_progressTweens[partIndex] == progressTween)
+                    {
+                        _progressTweens[partIndex] = null;
+                    }
+                });
+
+            _progressTweens[partIndex] = progressTween;
+        }
+
+        private void SetPartProgressImmediate(int partIndex, float progress)
+        {
+            _parts[partIndex].Progress = progress;
             UploadProgressToShader();
         }
 
@@ -135,6 +164,8 @@ namespace Gameplay.Level.Figure.PaintShader
 
         public void ResetAllParts()
         {
+            KillAllProgressTweens();
+
             for (int i = 0; i < _parts.Count; i++)
             {
                 _parts[i].Progress = 0f;
@@ -143,35 +174,13 @@ namespace Gameplay.Level.Figure.PaintShader
             UploadProgressToShader();
         }
 
-        public void CompleteTracing()
-        {
-            for (int i = 0; i < _parts.Count; i++)
-            {
-                _parts[i].Progress = 1f;
-            }
-
-            UploadProgressToShader();
-        }
-
         public void CompletePart(int partIndex) =>
             SetPartProgress(partIndex, 1f);
 
-        public void SetBrushSettings(
-            float radius,
-            float softness,
-            float noiseStrength,
-            float noiseScale)
-        {
-            brushRadius = Mathf.Clamp(radius, 0.001f, 0.5f);
-            brushSoftness = Mathf.Clamp(softness, 0.001f, 0.2f);
-            brushNoiseStrength = Mathf.Clamp(noiseStrength, 0f, 0.08f);
-            brushNoiseScale = Mathf.Clamp(noiseScale, 1f, 80f);
-
-            ApplyBrushSettingsToShader();
-        }
-
         private void ClearParts()
         {
+            KillAllProgressTweens();
+
             _parts.Clear();
             _pathPointCount = 0;
 
@@ -179,6 +188,28 @@ namespace Gameplay.Level.Figure.PaintShader
             Array.Clear(_partDataArray, 0, _partDataArray.Length);
             Array.Clear(_partProgressArray, 0, _partProgressArray.Length);
         }
+
+        private void KillProgressTween(int partIndex)
+        {
+            if (partIndex < 0 || partIndex >= _progressTweens.Length || _progressTweens[partIndex] == null)
+            {
+                return;
+            }
+
+            _progressTweens[partIndex].Kill();
+            _progressTweens[partIndex] = null;
+        }
+
+        private void KillAllProgressTweens()
+        {
+            for (int i = 0; i < _progressTweens.Length; i++)
+            {
+                KillProgressTween(i);
+            }
+        }
+
+        private void OnDestroy() =>
+            KillAllProgressTweens();
 
         private void AddPart(IReadOnlyList<Vector2> localPath)
         {

@@ -160,14 +160,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b276372aa60384fa55e175e328ea3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoints: []
-  waypointsAreLocalPositions: 0
-  onProgressChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onTracingCompleted:
-    m_PersistentCalls:
-      m_Calls: []
+  viewSpriteRenderer: {fileID: 3713669093442171723}
+  brushRadius: 0.14
+  brushSoftness: 0.04
+  brushNoiseStrength: 0
+  brushNoiseScale: 28
 --- !u!212 &3713669093442171723
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -235,6 +232,7 @@ GameObject:
   - component: {fileID: 6546653449110573983}
   - component: {fileID: 481632817678471003}
   - component: {fileID: 7204183948562170031}
+  - component: {fileID: 1520678222941226706}
   m_Layer: 0
   m_Name: FigureBase
   m_TagString: Untagged
@@ -288,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b784dbfa3c58b6849b65bf6539c8e642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointersHandlerAnimationComponent: {fileID: 1520678222941226706}
 --- !u!114 &7204183948562170031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,3 +299,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46e1ca8723304109b041052b40d83c0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1520678222941226706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4375755374761735513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39904f3b52c547c46a5291faf0319d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathShowDuration: 1

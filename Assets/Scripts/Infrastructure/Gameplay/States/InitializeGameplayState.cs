@@ -36,11 +36,12 @@ namespace Infrastructure.Gameplay.States
 
             _inputService.Disable();
             
-            await LoadLevel(payload);
+            FigureComponent figureComponent = await LoadLevel(payload);
 
             _loadingCurtain.Hide();
             
-            await _stateMachine.Enter<PresentationGameplayState, GameplayLevelPayload>(payload);
+            await _stateMachine.Enter<PresentationGameplayState, GameplayLevelPayload>(
+                new GameplayLevelPayload(payload.FigureType, payload.LevelId, figureComponent));
         }
 
         public UniTask Exit()
@@ -48,9 +49,9 @@ namespace Infrastructure.Gameplay.States
             return UniTask.CompletedTask;
         }
 
-        private async UniTask LoadLevel(GameplayLevelPayload payload)
+        private async UniTask<FigureComponent> LoadLevel(GameplayLevelPayload payload)
         {
-            await _levelLoader.LoadLevel(payload.FigureType, payload.LevelId);
+            return await _levelLoader.LoadLevel(payload.FigureType, payload.LevelId);
         }
     }
 }

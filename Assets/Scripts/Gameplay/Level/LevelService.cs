@@ -48,7 +48,7 @@ namespace Gameplay.Level
             _currentFigure.LetterTracingController?.SetPartProgress(_currentPathIndex, 0f);
 
             await pointersHandler.CreatePathPointers(currentPath.Path);
-            pointersHandler.ShowCurrentPath();
+            await pointersHandler.ShowCurrentPath();
 
             _currentPointerIndex = 0;
 

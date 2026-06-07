@@ -1,29 +1,27 @@
-﻿using UnityEngine;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Gameplay.Level
 {
     public class FigurePointerComponent : MonoBehaviour
     {
-        [SerializeField] private GameObject viewObject;
         [SerializeField] private PointerType figurePointerType;
         [SerializeField] private InteractionObserverComponent interactionObserverComponent;
+        [SerializeField] private FigurePointerAnimationComponent pointerAnimationComponent;
 
         public PointerType FigurePointerType => figurePointerType;
         public IDraggingInteractable DraggingInteractable => interactionObserverComponent;
 
-        public void Show() =>
-            SetVisible(true);
+        public UniTask Show(float duration) =>
+            pointerAnimationComponent.Show(duration);
 
         public void Hide() =>
-            SetVisible(false);
+            pointerAnimationComponent?.Hide();
 
         public void Activate() =>
             interactionObserverComponent?.Activate();
 
         public void Deactivate() =>
             interactionObserverComponent?.Deactivate();
-
-        private void SetVisible(bool isVisible) =>
-            viewObject.SetActive(isVisible);
     }
 }
