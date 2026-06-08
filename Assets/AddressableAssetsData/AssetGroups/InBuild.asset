@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: InBuild
+  m_EditorClassIdentifier: 
+  m_GroupName: InBuild
+  m_GUID: 5415bbc8c1cb2a2468ead57ace5a6ac6
+  m_SerializeEntries:
+  - m_GUID: 0dff37dec5fcd804bbbdae7d59566315
+    m_Address: Tutorial
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12831e34899d900499c987f2c2afb96d
+    m_Address: Gameplay
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 180bf99282e173c41b9407b1f591bb3b
+    m_Address: LevelsMenu
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c1273366db15eb4ea70d1ff7eeb50c9
+    m_Address: CurtainCanvas
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e1e30e270c153c4389a6a5a9cda7d4e
+    m_Address: LevelPointers
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 599bd95daf8d8154caf9d5f1c23338ee
+    m_Address: Levels_Shapes
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    - levels
+    - sprite_atlas
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a2899b14decfa54d84bc12b297c5123
+    m_Address: Sounds
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dc1adb4d665ff54da5f9d5f75b15d7e
+    m_Address: GUI
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bff88794b9a0f44380854bdfcf8dea3
+    m_Address: Levels_Numbers
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    - levels
+    - sprite_atlas
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 935f02d8b94a3d0418de324ae55e8f73
+    m_Address: Levels
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a18cab7d5bae5424aae2921caab9b57d
+    m_Address: Figures
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bca04f0a52b3c1a48a7700bc4b4cbff6
+    m_Address: Levels_Letters
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    - levels
+    - sprite_atlas
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d385a4b6e26fcd040972093dcca49a07
+    m_Address: UI/MenuLevelsWindow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea1cfec4403d09940ba0f751a58b24ea
+    m_Address: HUD
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a97bd72a66d47f8b8b0f7f45aa570ca
+    m_Address: StaticData/CategoryNamesConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ba8c5bd87bb4c62b1b45d415f3f5557
+    m_Address: StaticData/GameplayTipsEntry.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: e837297cac614b14a8787b4572723edf, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 902ab67363c2b834494d8dba80176142, type: 2}
+    - {fileID: 11400000, guid: 6be9c7f5f68b0184f9923a5c2422d615, type: 2}

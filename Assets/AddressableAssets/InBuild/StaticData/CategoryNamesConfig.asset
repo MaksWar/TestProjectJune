@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24dfb5f8832d485ea7bc77e8351905b3, type: 3}
+  m_Name: CategoryNamesConfig
+  m_EditorClassIdentifier: 
+  categories:
+  - Type: 0
+    Name: Trace letters
+  - Type: 1
+    Name: Trace numbers
+  - Type: 2
+    Name: Trace shapes
