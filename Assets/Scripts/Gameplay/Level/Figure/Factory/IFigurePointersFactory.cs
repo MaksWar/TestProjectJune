@@ -6,5 +6,6 @@ namespace Gameplay.Level
     public interface IFigurePointersFactory
     {
         UniTask<FigurePointerComponent> CreatePointer(PointerType type, Vector2 position, Transform parent);
+        void ReleasePointer(FigurePointerComponent pointer);
     }
 }

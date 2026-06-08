@@ -28,6 +28,12 @@ namespace Utilities.Pool
         public async UniTask<T> Pop(string path)
         {
             var prefab = await _assetsProvider.LoadPrefab<T>(path, GetType());
+
+            if (prefab == null)
+            {
+                Debug.LogError($"{GetType().Name}: prefab '{path}' was not found or has no {typeof(T).Name} component.");
+                return null;
+            }
             
             return await Pop(prefab);
         }

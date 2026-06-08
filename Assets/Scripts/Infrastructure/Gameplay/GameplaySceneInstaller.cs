@@ -3,6 +3,7 @@ using Gameplay.Level;
 using Gameplay.Tips;
 using Infrastructure.Services.Input;
 using UnityEngine;
+using Utilities.Pool;
 using Zenject;
 
 namespace Infrastructure.Gameplay
@@ -22,9 +23,11 @@ namespace Infrastructure.Gameplay
                 .NonLazy();
 
             Container.Bind<StatesFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GameplaySceneLifetime>().AsSingle();
             Container.Bind<SceneStateMachine>().AsSingle();
             Container.Bind<LevelService>().AsSingle();
             Container.Bind<ILevelFiguresFactory>().To<LevelFiguresFactory>().AsSingle();
+            Container.Bind<IObjectPool<FigurePointerComponent>>().To<FigurePointerPool>().AsSingle();
             Container.Bind<IFigurePointersFactory>().To<FigurePointersFactory>().AsSingle();
             Container.Bind<ILevelLoader>().To<LevelLoader>().AsSingle();
             Container.Bind<GameplayTipSettings>().FromInstance(gameplayTipSettings).AsSingle();

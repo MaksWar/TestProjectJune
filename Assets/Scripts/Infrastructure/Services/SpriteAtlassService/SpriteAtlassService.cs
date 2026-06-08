@@ -80,14 +80,8 @@ namespace Infrastructure.Services.SpriteAtlassService
 
             foreach (var atlas in _atlases[type])
             {
-                Debug.Log($"count sprites in atlas {atlas.name} is {atlas.spriteCount}");
-
                 Sprite[] sprites = new Sprite[atlas.spriteCount];
                 atlas.GetSprites(sprites);
-                foreach (Sprite variable in sprites)
-                {
-                    Debug.Log($"sprite name in atlas {atlas.name} is {variable.name}");
-                }
                 
                 sprite = atlas.GetSprite(name);
                 if (sprite != null)

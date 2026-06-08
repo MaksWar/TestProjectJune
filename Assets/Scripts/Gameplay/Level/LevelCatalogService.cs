@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Gameplay.Level.Models.Public;
@@ -21,28 +22,36 @@ namespace Gameplay.Level
 
         public async UniTask<IReadOnlyList<LevelGroupData>> GetGroupsAsync()
         {
-            await LoadCatalogIfNeeded();
+            if (await LoadCatalogIfNeeded() == false)
+            {
+                return Array.Empty<LevelGroupData>();
+            }
 
             return _catalog?.Groups != null
                 ? _catalog.Groups
-                : System.Array.Empty<LevelGroupData>();
+                : Array.Empty<LevelGroupData>();
         }
 
         public IReadOnlyList<LevelData> GetLevels(FigureType type)
         {
             LevelGroupData group = _catalog?.GetLevelGroupByType(type);
-            return group?.Levels != null ? group.Levels : System.Array.Empty<LevelData>();
+            
+            return group?.Levels != null ? group.Levels : Array.Empty<LevelData>();
         }
 
         public bool TryGetLevel(FigureType type, string id, out LevelData levelData)
         {
             levelData = _catalog?.GetLevelData(type, id);
+            
             return levelData != null;
         }
 
         public async UniTask<LevelData> GetNextLevel(FigureType type, string currentId)
         {
-            await LoadCatalogIfNeeded();
+            if (!await LoadCatalogIfNeeded())
+            {
+                return null;
+            }
 
             IReadOnlyList<LevelData> levels = GetLevels(type);
             if (levels.Count == 0)
@@ -70,7 +79,10 @@ namespace Gameplay.Level
 
         public async UniTask<LevelEntry> LoadLevelEntry(FigureType type, string id)
         {
-            await LoadCatalogIfNeeded();
+            if (await LoadCatalogIfNeeded() == false)
+            {
+                return null;
+            }
 
             LevelData levelData = _catalog?.GetLevelData(type, id);
             TextAsset levelJson = levelData?.Json;
@@ -78,20 +90,25 @@ namespace Gameplay.Level
             return DeserializeLevelEntry(type, id, levelJson);
         }
 
-        private async UniTask LoadCatalogIfNeeded()
+        private async UniTask<bool> LoadCatalogIfNeeded()
         {
-            if (_isCatalogLoaded)
+            if (_isCatalogLoaded && _catalog != null)
             {
-                return;
+                return true;
             }
 
             _catalog = await _assetsProvider.Load<LevelCatalog>(LevelCatalogPath, GetType());
-            _isCatalogLoaded = true;
 
             if (_catalog == null)
             {
-                Debug.LogWarning($"{nameof(LevelCatalogService)}: '{LevelCatalogPath}' was not found. Direct level address loading will be used.");
+                Debug.LogError($"{nameof(LevelCatalogService)}: failed to load level catalog at '{LevelCatalogPath}'.");
+
+                return false;
             }
+
+            _isCatalogLoaded = true;
+
+            return true;
         }
 
         private LevelEntry DeserializeLevelEntry(FigureType type, string id, TextAsset levelJson)
@@ -103,7 +120,24 @@ namespace Gameplay.Level
                 return null;
             }
 
-            LevelEntry levelEntry = JsonUtility.FromJson<LevelEntry>(levelJson.text);
+            LevelEntry levelEntry;
+            try
+            {
+                levelEntry = JsonUtility.FromJson<LevelEntry>(levelJson.text);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"{nameof(LevelCatalogService)}: failed to deserialize level JSON for '{type}/{id}'. {exception.Message}");
+
+                return null;
+            }
+
+            if (levelEntry == null)
+            {
+                Debug.LogError($"{nameof(LevelCatalogService)}: level JSON for '{type}/{id}' is invalid.");
+
+                return null;
+            }
 
             levelEntry.LevelID = id;
             levelEntry.FigureType = type;

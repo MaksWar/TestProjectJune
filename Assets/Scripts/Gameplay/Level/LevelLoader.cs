@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -14,9 +15,9 @@ namespace Gameplay.Level
             _levelFiguresFactory = levelFiguresFactory;
         }
 
-        public async UniTask<FigureComponent> LoadLevel(FigureType type, string id)
+        public async UniTask<FigureComponent> LoadLevel(FigureType type, string id, CancellationToken cancellationToken = default)
         {
-            _currentFigure = await _levelFiguresFactory.CreateFigure(type, id);
+            _currentFigure = await _levelFiguresFactory.CreateFigure(type, id, cancellationToken);
 
             return _currentFigure;
         }

@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Gameplay.MetaGameplay.Player.Models.Private;
 using Hellmade.Sound;
@@ -52,8 +53,8 @@ namespace Infrastructure.Services.SoundService
                 currentMusicFadeOutSeconds, sourceTransform);
 
         public async UniTask<int> PlaySoundAsync(string soundKey, float volume = 1f, bool loop = false,
-            Transform sourceTransform = null) =>
-            await _soundManager.PlaySoundAsync(soundKey, volume, loop, sourceTransform);
+            Transform sourceTransform = null, CancellationToken cancellationToken = default) =>
+            await _soundManager.PlaySoundAsync(soundKey, volume, loop, sourceTransform, cancellationToken);
 
         public async UniTask<int> PlayUISoundAsync(string soundKey, float volume = 1f, int maxSimultaneousCount = -1) =>
             await _soundManager.PlayUISoundAsync(soundKey, volume, maxSimultaneousCount);

@@ -27,7 +27,6 @@ namespace Utilities
             await operation;
 
             GameObject instance = operation.Result[0];
-            GameBootstrapper.DiContainer.InjectGameObject(instance);
 
             return instance;
         }

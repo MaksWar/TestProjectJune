@@ -50,7 +50,6 @@ namespace Infrastructure.States
             _logService.Log("MetaGameplayLoadState Enter");
             _loadingCurtain.Show();
             
-            await _assetsProvider.WarmupAssetsByLabel(AssetsLabels.MetaGameplayState, GetType());
             await _sceneLoader.Load(InfrastructureAssetPath.LevelsMenuScene);
 
             await InitializeLevelMenu();

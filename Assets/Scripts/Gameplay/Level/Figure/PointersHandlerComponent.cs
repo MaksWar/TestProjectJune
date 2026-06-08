@@ -102,10 +102,7 @@ namespace Gameplay.Level
         {
             foreach (FigurePointerComponent pointer in _pointers)
             {
-                if (pointer != null)
-                {
-                    Destroy(pointer.gameObject);
-                }
+                _pointersFactory.ReleasePointer(pointer);
             }
 
             _pointers.Clear();

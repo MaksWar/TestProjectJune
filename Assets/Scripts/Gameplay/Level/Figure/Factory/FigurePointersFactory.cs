@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
-using Infrastructure.AssetManagement;
 using UnityEngine;
-using Zenject;
+using Utilities.Pool;
 
 namespace Gameplay.Level
 {
@@ -11,33 +10,38 @@ namespace Gameplay.Level
         private const string DefaultPointer = "circle_pointer";
         private const string FinalPointer = "star_pointer";
 
-        private readonly IAssetsProvider _assetsProvider;
-        private readonly IInstantiator _instantiator;
+        private readonly IObjectPool<FigurePointerComponent> _pointersPool;
 
-        public FigurePointersFactory(IAssetsProvider assetsProvider, IInstantiator instantiator)
+        public FigurePointersFactory(IObjectPool<FigurePointerComponent> pointersPool)
         {
-            _assetsProvider = assetsProvider;
-            _instantiator = instantiator;
+            _pointersPool = pointersPool;
         }
 
         public async UniTask<FigurePointerComponent> CreatePointer(PointerType type, Vector2 position, Transform parent)
         {
             string pointerPath = GetPointerPath(type);
-            GameObject prefab = await _assetsProvider.Load<GameObject>(pointerPath, GetType());
+            FigurePointerComponent pointerComponent = await _pointersPool.Pop(pointerPath);
 
-            if (prefab == null)
+            if (pointerComponent == null)
             {
                 Debug.LogError($"{nameof(FigurePointersFactory)}: pointer prefab '{pointerPath}' was not found.");
                 return null;
             }
 
-            GameObject pointerObject = _instantiator.InstantiatePrefab(prefab);
-            pointerObject.transform.SetParent(parent, false);
-            pointerObject.transform.localPosition = position;
-
-            FigurePointerComponent pointerComponent = pointerObject.GetComponent<FigurePointerComponent>();
+            pointerComponent.transform.SetParent(parent, false);
+            pointerComponent.transform.localPosition = position;
 
             return pointerComponent;
+        }
+
+        public void ReleasePointer(FigurePointerComponent pointer)
+        {
+            if (pointer == null)
+            {
+                return;
+            }
+
+            _pointersPool.Push(pointer);
         }
 
         private static string GetPointerPath(PointerType type) =>

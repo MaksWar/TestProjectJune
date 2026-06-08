@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Hellmade.Sound;
 using Infrastructure.AssetManagement;
@@ -38,17 +39,20 @@ namespace Infrastructure.Services.SoundService
         }
 
         public async UniTask<int> PlaySoundAsync(string soundKey, float volume = 1f, bool loop = false,
-            Transform sourceTransform = null)
+            Transform sourceTransform = null, CancellationToken cancellationToken = default)
         {
             AudioClip clip = await LoadClipAsync(soundKey);
-            if (clip == null)
+            if (clip == null || cancellationToken.IsCancellationRequested)
             {
                 return -1;
             }
 
             int soundId = EazySoundManager.PlaySound(clip, volume, loop, sourceTransform);
 
-            await WaitForSoundToCompleteAsync(soundId);
+            if (await WaitForSoundToCompleteAsync(soundId, cancellationToken))
+            {
+                return -1;
+            }
 
             return soundId;
         }
@@ -101,14 +105,14 @@ namespace Infrastructure.Services.SoundService
             return clip;
         }
 
-        private static async UniTask WaitForSoundToCompleteAsync(int soundId)
+        private static async UniTask<bool> WaitForSoundToCompleteAsync(int soundId, CancellationToken cancellationToken)
         {
-            await UniTask.WaitUntil(() =>
+            return await UniTask.WaitUntil(() =>
             {
                 Audio audio = EazySoundManager.GetSoundAudio(soundId);
 
                 return audio == null || (!audio.IsPlaying && !audio.Paused);
-            });
+            }, cancellationToken: cancellationToken).SuppressCancellationThrow();
         }
 
         private static string GetPath(string soundKey) =>

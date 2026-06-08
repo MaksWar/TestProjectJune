@@ -20,7 +20,7 @@ namespace Infrastructure.States
            await newState.Enter();
         }
 
-        public async UniTask Enter<TState, TPayload>(TPayload payload) where TState : class, IPaylodedState<TPayload>
+        public async UniTask Enter<TState, TPayload>(TPayload payload) where TState : class, IPayloadedState<TPayload>
         {
             TState newState = await ChangeState<TState>();
             await newState.Enter(payload);

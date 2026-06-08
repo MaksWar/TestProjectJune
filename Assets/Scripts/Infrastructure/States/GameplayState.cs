@@ -7,7 +7,7 @@ using Infrastructure.UI.LoadingCurtain;
 
 namespace Infrastructure.States
 {
-    public class GameplayState : IPaylodedState<GameplayLevelPayload>
+    public class GameplayState : IPayloadedState<GameplayLevelPayload>
     {
         private readonly IUIService _uiService;
         private readonly ILogService _logService;
@@ -38,8 +38,6 @@ namespace Infrastructure.States
         {
             _loadingCurtain.Show();
             _uiService.HUDRoot.Hide();
-
-            await _assetsProvider.ReleaseAssetsByLabel(AssetsLabels.GameplayState, GetType());
         }
     }
 }

@@ -14,12 +14,14 @@ namespace Infrastructure.Gameplay.States
         private readonly SceneStateMachine _stateMachine;
         private readonly ILoadingCurtain _loadingCurtain;
         private readonly IGameplayContextService _gameplayContextService;
+        private readonly IGameplaySceneLifetime _gameplaySceneLifetime;
 
         public InitializeGameplayState(
             SceneStateMachine stateMachine,
             ILoadingCurtain loadingCurtain,
             ILevelLoader levelLoader,
             IGameplayContextService gameplayContextService,
+            IGameplaySceneLifetime gameplaySceneLifetime,
             IInputService inputService
             )
         {
@@ -28,12 +30,23 @@ namespace Infrastructure.Gameplay.States
             _stateMachine = stateMachine;
             _loadingCurtain = loadingCurtain;
             _gameplayContextService = gameplayContextService;
+            _gameplaySceneLifetime = gameplaySceneLifetime;
         }
 
         public async UniTask Enter()
         {
             GameplayLevelPayload payload = _gameplayContextService.LevelPayload;
             FigureComponent figureComponent = await LoadLevel(payload);
+
+            if (_gameplaySceneLifetime.IsCancellationRequested)
+            {
+                if (figureComponent != null)
+                {
+                    Object.Destroy(figureComponent.gameObject);
+                }
+
+                return;
+            }
 
             _loadingCurtain.Hide();
             
@@ -48,7 +61,10 @@ namespace Infrastructure.Gameplay.States
 
         private async UniTask<FigureComponent> LoadLevel(GameplayLevelPayload payload)
         {
-            return await _levelLoader.LoadLevel(payload.FigureType, payload.LevelId);
+            return await _levelLoader.LoadLevel(
+                payload.FigureType,
+                payload.LevelId,
+                _gameplaySceneLifetime.CancellationToken);
         }
     }
 }

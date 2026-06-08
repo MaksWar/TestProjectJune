@@ -1,9 +1,20 @@
 using Cysharp.Threading.Tasks;
+using Infrastructure.AssetManagement;
 using UnityEngine;
+using Utilities.Pool;
+using Zenject;
 
 namespace Gameplay.Level
 {
-    public class FigurePointerComponent : MonoBehaviour
+    public class FigurePointerPool : ObjectPool<FigurePointerComponent>
+    {
+        public FigurePointerPool(IAssetsProvider assetsProvider, DiContainer container)
+            : base(assetsProvider, container)
+        {
+        }
+    }
+
+    public class FigurePointerComponent : MonoBehaviour, IPoolableObject
     {
         [SerializeField] private PointerType figurePointerType;
         [SerializeField] private InteractionObserverComponent interactionObserverComponent;
@@ -23,5 +34,20 @@ namespace Gameplay.Level
 
         public void Deactivate() =>
             interactionObserverComponent?.Deactivate();
+
+        public void OnPop()
+        {
+            Hide();
+            Deactivate();
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = Vector3.one;
+        }
+
+        public void OnPush()
+        {
+            Hide();
+            Deactivate();
+            transform.SetParent(null, false);
+        }
     }
 }

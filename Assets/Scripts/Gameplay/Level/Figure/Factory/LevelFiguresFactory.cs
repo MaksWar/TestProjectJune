@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Gameplay.Level.Models.Public;
 using Infrastructure.AssetManagement;
@@ -35,12 +36,17 @@ namespace Gameplay.Level
             _gameplayCamera = gameplayCamera;
         }
 
-        public async UniTask<FigureComponent> CreateFigure(FigureType type, string id)
+        public async UniTask<FigureComponent> CreateFigure(FigureType type, string id, CancellationToken cancellationToken = default)
         {
             LevelEntry levelEntry = await LoadLevelEntry(type, id);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return null;
+            }
+
             GameObject prefab = await _assetsProvider.Load<GameObject>(BaseFigurePrefabPath, GetType());
 
-            if (levelEntry == null || prefab == null)
+            if (cancellationToken.IsCancellationRequested || levelEntry == null || prefab == null)
             {
                 return null;
             }

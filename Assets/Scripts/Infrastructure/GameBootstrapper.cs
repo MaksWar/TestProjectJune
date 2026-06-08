@@ -10,17 +10,13 @@ namespace Infrastructure
     {
         private GameStateMachine _gameStateMachine;
         private StatesFactory _statesFactory;
-        
-        public static DiContainer DiContainer;
 
         [Inject]
         public void Construct(
             GameStateMachine gameStateMachine,
-            StatesFactory statesFactory,
-            DiContainer diContainer
+            StatesFactory statesFactory
         )
         {
-            DiContainer = diContainer;
             _gameStateMachine = gameStateMachine;
             _statesFactory = statesFactory;
         }
@@ -35,7 +31,6 @@ namespace Infrastructure
             _gameStateMachine.RegisterState(_statesFactory.Create<LevelsMenuState>());
 
             _gameStateMachine.Enter<GameBootstrapState>().Forget();
-
 
             DontDestroyOnLoad(gameObject);
         }

@@ -50,23 +50,12 @@ namespace Gameplay.Tips
         {
             _isStopped = true;
 
-            if (_fingerComponent == null)
-            {
-                _fingerComponent = null;
-
-                return;
-            }
-
-            _fingerComponent.Stop();
+            _fingerComponent?.Stop();
         }
 
         private async UniTask<FingerComponent> GetFingerComponent()
         {
-            if (_fingerComponent == null)
-            {
-                _fingerComponent = null;
-            }
-            else
+            if (_fingerComponent != null)
             {
                 return _fingerComponent;
             }

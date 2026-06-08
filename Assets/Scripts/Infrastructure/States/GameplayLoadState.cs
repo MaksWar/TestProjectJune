@@ -8,7 +8,7 @@ using Infrastructure.UI.LoadingCurtain;
 
 namespace Infrastructure.States
 {
-    public class GameplayLoadState : IPaylodedState<GameplayLevelPayload>
+    public class GameplayLoadState : IPayloadedState<GameplayLevelPayload>
     {
         private readonly IUIService _uiService;
         private readonly ILogService _logService;
@@ -45,7 +45,6 @@ namespace Infrastructure.States
             _gameplayContextService.SetLevelPayload(payload);
             _uiService.HUDRoot.Show();
 
-            await _assetsProvider.WarmupAssetsByLabel(AssetsLabels.GameplayState, typeof(GameplayState));
             await _sceneLoader.Load(InfrastructureAssetPath.GameplayScene);
             await _gameStateMachine.Enter<GameplayState, GameplayLevelPayload>(payload);
         }

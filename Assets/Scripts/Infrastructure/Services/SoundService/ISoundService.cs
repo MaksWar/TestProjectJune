@@ -1,3 +1,4 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Infrastructure.Services.SoundService
             float fadeInSeconds = 1f, float fadeOutSeconds = 1f, float currentMusicFadeOutSeconds = -1f,
             Transform sourceTransform = null);
         UniTask<int> PlaySoundAsync(string soundKey, float volume = 1f, bool loop = false,
-            Transform sourceTransform = null);
+            Transform sourceTransform = null, CancellationToken cancellationToken = default);
         UniTask<int> PlayUISoundAsync(string soundKey, float volume = 1f, int maxSimultaneousCount = -1);
         void StopAll();
         void StopAllMusic(float fadeOutSeconds = -1f);

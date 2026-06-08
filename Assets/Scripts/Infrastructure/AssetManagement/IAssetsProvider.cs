@@ -14,8 +14,6 @@ namespace Infrastructure.AssetManagement
         UniTask<List<string>> GetAssetsListByLabel<TAsset>(string label, Type user);
         UniTask<List<string>> GetAssetsListByLabel(string label, Type user, Type type = null);
         UniTask<TAsset[]> LoadAll<TAsset>(List<string> keys, Type user) where TAsset : class;
-        UniTask WarmupAssetsByLabel(string label, Type user);
-        UniTask ReleaseAssetsByLabel(string label, Type user);
         void Cleanup();
         void ReleaseAsset(string name, Type user);
         bool TryReleaseAsset(string name, Type user); 
