@@ -7,7 +7,6 @@ namespace Infrastructure.CompositionRoot.SubInstallers
     {
         public override void InstallBindings()
         {
-            Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
         }
     }
 }

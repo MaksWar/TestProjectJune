@@ -9,7 +9,10 @@ namespace Gameplay.Tips.GameplayTips
         private readonly ISoundService _soundService;
         private readonly string _soundKey;
 
-        public SoundGameplayTip(float inactivityTime, ISoundService soundService, string soundKey) : base(inactivityTime)
+        public SoundGameplayTip(
+            ISoundService soundService,
+            string soundKey
+        )
         {
             _soundService = soundService;
             _soundKey = soundKey;

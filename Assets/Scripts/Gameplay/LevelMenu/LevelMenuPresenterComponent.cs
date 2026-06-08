@@ -98,7 +98,7 @@ namespace Gameplay.LevelMenu
 
             string categoryName = GetConfiguredCategoryName(group, _staticDataService.GetCategoryNameConfig());
 
-            categoryGroup.Initialize(group.Type, categoryName, levelViews);
+            categoryGroup.Initialize(categoryName);
 
             return categoryGroup;
         }

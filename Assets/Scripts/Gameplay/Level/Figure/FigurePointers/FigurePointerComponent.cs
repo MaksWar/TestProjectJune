@@ -1,19 +1,9 @@
 using Cysharp.Threading.Tasks;
-using Infrastructure.AssetManagement;
 using UnityEngine;
 using Utilities.Pool;
-using Zenject;
 
 namespace Gameplay.Level
 {
-    public class FigurePointerPool : ObjectPool<FigurePointerComponent>
-    {
-        public FigurePointerPool(IAssetsProvider assetsProvider, DiContainer container)
-            : base(assetsProvider, container)
-        {
-        }
-    }
-
     public class FigurePointerComponent : MonoBehaviour, IPoolableObject
     {
         [SerializeField] private PointerType figurePointerType;

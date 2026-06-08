@@ -17,7 +17,6 @@ namespace Gameplay.Level
         private readonly ISpriteAtlasService _spriteAtlasService;
         private readonly ILevelCatalogService _levelCatalogService;
         private readonly IInstantiator _instantiator;
-        private readonly IFigurePointersFactory _pointersFactory;
         private readonly Camera _gameplayCamera;
 
         public LevelFiguresFactory(
@@ -25,14 +24,12 @@ namespace Gameplay.Level
             ISpriteAtlasService spriteAtlasService,
             ILevelCatalogService levelCatalogService,
             IInstantiator instantiator,
-            IFigurePointersFactory pointersFactory,
             Camera gameplayCamera)
         {
             _assetsProvider = assetsProvider;
             _spriteAtlasService = spriteAtlasService;
             _levelCatalogService = levelCatalogService;
             _instantiator = instantiator;
-            _pointersFactory = pointersFactory;
             _gameplayCamera = gameplayCamera;
         }
 
@@ -62,13 +59,14 @@ namespace Gameplay.Level
             if (figureComponent == null)
             {
                 Debug.LogError($"{nameof(LevelFiguresFactory)}: prefab '{BaseFigurePrefabPath}' has no {nameof(FigureComponent)}.");
+
                 return null;
             }
 
             InitializeViews(figureComponent, levelEntry);
 
             List<PathComponent> pathComponents = CreatePaths(figureObject.transform, levelEntry);
-            figureComponent.Initialize(levelEntry, pathComponents, _gameplayCamera);
+            figureComponent.Initialize(pathComponents, _gameplayCamera);
 
             return figureComponent;
         }

@@ -32,20 +32,6 @@ namespace Gameplay.Level
                 : Array.Empty<LevelGroupData>();
         }
 
-        public IReadOnlyList<LevelData> GetLevels(FigureType type)
-        {
-            LevelGroupData group = _catalog?.GetLevelGroupByType(type);
-            
-            return group?.Levels != null ? group.Levels : Array.Empty<LevelData>();
-        }
-
-        public bool TryGetLevel(FigureType type, string id, out LevelData levelData)
-        {
-            levelData = _catalog?.GetLevelData(type, id);
-            
-            return levelData != null;
-        }
-
         public async UniTask<LevelData> GetNextLevel(FigureType type, string currentId)
         {
             if (!await LoadCatalogIfNeeded())
@@ -143,6 +129,13 @@ namespace Gameplay.Level
             levelEntry.FigureType = type;
 
             return levelEntry;
+        }
+
+        private IReadOnlyList<LevelData> GetLevels(FigureType type)
+        {
+            LevelGroupData group = _catalog?.GetLevelGroupByType(type);
+            
+            return group?.Levels != null ? group.Levels : Array.Empty<LevelData>();
         }
     }
 }

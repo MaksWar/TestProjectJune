@@ -49,8 +49,6 @@ namespace Infrastructure.CompositionRoot
             BindGameBootstrapperFactory();
 
             BindLoadingCurtains();
-            
-            BindGameFactory();
         }
 
         private void BindSaveLoad()
@@ -63,15 +61,6 @@ namespace Infrastructure.CompositionRoot
             Container.Bind<ISaveLoadService>().To<SaveLoadService>().AsSingle();
             Container.Bind<ISaveLoadManager>().To<SaveLoadManager>().AsSingle();
             Container.Bind<IAuthService>().To<AuthService>().AsSingle();
-        }
-        
-        private void BindGameFactory()
-        {
-            Container
-                .Bind<IUIFactory>()
-                .FromSubContainerResolve()
-                .ByInstaller<GameFactoryInstaller>()
-                .AsSingle();
         }
         
         private void BindGameBootstrapperFactory()

@@ -13,11 +13,10 @@ namespace Gameplay.Tips.GameplayTips
         private readonly GameplayFingerRouteAnimator _fingerRouteAnimator;
 
         public FingerGameplayTip(
-            float inactivityTime,
             LevelService levelService,
             IAssetsProvider assetsProvider,
             IInstantiator instantiator,
-            GameplayTipSettings settings) : base(inactivityTime)
+            GameplayTipSettings settings)
         {
             _levelService = levelService;
             _fingerRouteAnimator = new GameplayFingerRouteAnimator(assetsProvider, instantiator, settings);

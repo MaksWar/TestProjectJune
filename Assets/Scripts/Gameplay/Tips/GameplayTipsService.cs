@@ -131,12 +131,10 @@ namespace Gameplay.Tips
 
             _tipsByInactivityTime.Clear();
             _tipsByInactivityTime[soundTipInactiveTime] = new SoundGameplayTip(
-                soundTipInactiveTime,
                 _soundService,
                 PresentationSoundsMap.StartPresentationSoundByType[figureType]);
 
             _tipsByInactivityTime[fingerTipInactiveTime] = new FingerGameplayTip(
-                fingerTipInactiveTime,
                 _levelService,
                 _assetsProvider,
                 _instantiator,
