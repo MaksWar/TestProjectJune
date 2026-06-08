@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Sprites;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Gameplay.Level.Figure.PaintShader
 {
@@ -373,7 +376,7 @@ namespace Gameplay.Level.Figure.PaintShader
         {
             viewSpriteRenderer = GetComponent<SpriteRenderer>();
 
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || PrefabUtility.IsPartOfPrefabAsset(gameObject))
             {
                 return;
             }
