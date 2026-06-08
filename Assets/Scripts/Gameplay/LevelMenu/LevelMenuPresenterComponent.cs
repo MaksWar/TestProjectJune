@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Gameplay.Level;
 using Gameplay.Level.Models.Public;
 using Infrastructure.Gameplay;
+using Infrastructure.StaticData;
 using Infrastructure.Services.SpriteAtlassService;
 using Infrastructure.States;
 using UnityEngine;
@@ -23,16 +24,19 @@ namespace Gameplay.LevelMenu
         private ILevelCatalogService _levelCatalogService;
         private GameStateMachine _gameStateMachine;
         private ISpriteAtlasService _spriteAtlasService;
+        private IStaticDataService _staticDataService;
         private readonly List<CategoriesGroupViewComponent> _categoryGroups = new();
 
         public async UniTask InitializeAsync(
             ILevelCatalogService levelCatalogService,
             GameStateMachine gameStateMachine,
-            ISpriteAtlasService spriteAtlasService)
+            ISpriteAtlasService spriteAtlasService,
+            IStaticDataService staticDataService)
         {
             _levelCatalogService = levelCatalogService;
             _gameStateMachine = gameStateMachine;
             _spriteAtlasService = spriteAtlasService;
+            _staticDataService = staticDataService;
 
             Clear();
 
@@ -92,7 +96,9 @@ namespace Gameplay.LevelMenu
                 }
             }
 
-            categoryGroup.Initialize(group.Type, levelViews);
+            string categoryName = GetConfiguredCategoryName(group, _staticDataService.GetCategoryNameConfig());
+
+            categoryGroup.Initialize(group.Type, categoryName, levelViews);
 
             return categoryGroup;
         }
@@ -135,6 +141,19 @@ namespace Gameplay.LevelMenu
             }
 
             return await CreateLevelViewAsync(levelEntry, parent);
+        }
+
+        private static string GetConfiguredCategoryName(LevelGroupData group, CategoryNamesConfig categoryNamesConfig)
+        {
+            string categoryName = group.Type.ToString();
+            if (categoryNamesConfig == null)
+            {
+                return categoryName;
+            }
+
+            categoryNamesConfig.TryGetCategoryName(group.Type, out string configuredCategoryName);
+            
+            return configuredCategoryName ?? categoryName;
         }
 
         private void OnLevelSelected(FigureType type, string id)

@@ -6,6 +6,7 @@ using Gameplay.Tips.GameplayTips;
 using Infrastructure.AssetManagement;
 using Infrastructure.Services.Input;
 using Infrastructure.Services.SoundService;
+using Infrastructure.StaticData;
 using UnityEngine;
 using Zenject;
 
@@ -13,15 +14,14 @@ namespace Gameplay.Tips
 {
     public class GameplayTipsService : IGameplayTipsService, ITickable, IDisposable
     {
-        private const float SoundTipInactiveTime = 7f;
-        private const float FingerTipInactiveTime = 14f;
-
+        private readonly LevelService _levelService;
         private readonly IInputService _inputService;
         private readonly ISoundService _soundService;
-        private readonly LevelService _levelService;
-        private readonly IAssetsProvider _assetsProvider;
         private readonly IInstantiator _instantiator;
         private readonly GameplayTipSettings _settings;
+        private readonly IAssetsProvider _assetsProvider;
+        private readonly IStaticDataService _staticDataService;
+
         private readonly Dictionary<float, BaseGameplayTip> _tipsByInactivityTime = new();
 
         private GameplayTipTimer _timer;
@@ -34,6 +34,7 @@ namespace Gameplay.Tips
             LevelService levelService,
             IAssetsProvider assetsProvider,
             IInstantiator instantiator,
+            IStaticDataService staticDataService,
             GameplayTipSettings settings)
         {
             _inputService = inputService;
@@ -41,6 +42,7 @@ namespace Gameplay.Tips
             _levelService = levelService;
             _assetsProvider = assetsProvider;
             _instantiator = instantiator;
+            _staticDataService = staticDataService;
             _settings = settings;
 
             SubscribeInput();
@@ -116,14 +118,25 @@ namespace Gameplay.Tips
 
         private void CreateTips(FigureType figureType)
         {
+            GameplayTipsEntry gameplayTipsEntry = _staticDataService.GetGameplayTipsEntry();
+            if (gameplayTipsEntry == null)
+            {
+                Debug.LogError($"{nameof(GameplayTipsService)}: {nameof(GameplayTipsEntry)} is not loaded.");
+
+                return;
+            }
+
+            float soundTipInactiveTime = gameplayTipsEntry.SoundTipInactiveTime;
+            float fingerTipInactiveTime = gameplayTipsEntry.FingerTipInactiveTime;
+
             _tipsByInactivityTime.Clear();
-            _tipsByInactivityTime[SoundTipInactiveTime] = new SoundGameplayTip(
-                SoundTipInactiveTime,
+            _tipsByInactivityTime[soundTipInactiveTime] = new SoundGameplayTip(
+                soundTipInactiveTime,
                 _soundService,
                 PresentationSoundsMap.StartPresentationSoundByType[figureType]);
 
-            _tipsByInactivityTime[FingerTipInactiveTime] = new FingerGameplayTip(
-                FingerTipInactiveTime,
+            _tipsByInactivityTime[fingerTipInactiveTime] = new FingerGameplayTip(
+                fingerTipInactiveTime,
                 _levelService,
                 _assetsProvider,
                 _instantiator,

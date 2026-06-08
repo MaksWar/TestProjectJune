@@ -105,6 +105,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a97bd72a66d47f8b8b0f7f45aa570ca
+    m_Address: StaticData/CategoryNamesConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ba8c5bd87bb4c62b1b45d415f3f5557
+    m_Address: StaticData/GameplayTipsEntry.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: e837297cac614b14a8787b4572723edf, type: 2}
   m_SchemaSet:

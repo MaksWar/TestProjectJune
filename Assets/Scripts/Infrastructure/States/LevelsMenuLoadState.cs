@@ -6,6 +6,7 @@ using Infrastructure.SceneMenegment;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.SaveLoadSystem;
 using Infrastructure.Services.SpriteAtlassService;
+using Infrastructure.StaticData;
 using Infrastructure.UI;
 using Infrastructure.UI.LoadingCurtain;
 
@@ -21,6 +22,7 @@ namespace Infrastructure.States
         private readonly IUIService _uiService;
         private readonly ILevelCatalogService _levelCatalogService;
         private readonly ISpriteAtlasService _spriteAtlasService;
+        private readonly IStaticDataService _staticDataService;
 
         private LevelMenuPresenterComponent _levelMenu;
 
@@ -32,7 +34,8 @@ namespace Infrastructure.States
             GameStateMachine gameStateMachine,
             IUIService uiService,
             ILevelCatalogService levelCatalogService,
-            ISpriteAtlasService spriteAtlasService
+            ISpriteAtlasService spriteAtlasService,
+            IStaticDataService staticDataService
         )
         {
             _loadingCurtain = loadingCurtain;
@@ -43,6 +46,7 @@ namespace Infrastructure.States
             _uiService = uiService;
             _levelCatalogService = levelCatalogService;
             _spriteAtlasService = spriteAtlasService;
+            _staticDataService = staticDataService;
         }
 
         public async UniTask Enter()
@@ -66,7 +70,7 @@ namespace Infrastructure.States
         {
             _levelMenu = await _uiService.OpenUIEntity<LevelMenuPresenterComponent>(LevelMenuPresenterComponent.PrefabName);
 
-            await _levelMenu.InitializeAsync(_levelCatalogService, _gameStateMachine, _spriteAtlasService);
+            await _levelMenu.InitializeAsync(_levelCatalogService, _gameStateMachine, _spriteAtlasService, _staticDataService);
         }
     }
 }

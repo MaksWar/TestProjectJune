@@ -19,12 +19,12 @@ namespace Gameplay.LevelMenu
         public FigureType FigureType => _figureType;
         public IReadOnlyList<LevelViewComponent> LevelViewComponents => _levelViewComponents;
 
-        public void Initialize(FigureType figureType, List<LevelViewComponent> levelViewComponents)
+        public void Initialize(FigureType figureType, string categoryName, List<LevelViewComponent> levelViewComponents)
         {
             _figureType = figureType;
             _levelViewComponents = levelViewComponents;
             
-            categoryNameText.text = _figureType.ToString();
+            categoryNameText.text = categoryName;
         }
 
         public void SetParentScrollRect(ScrollRect scrollRect) =>
