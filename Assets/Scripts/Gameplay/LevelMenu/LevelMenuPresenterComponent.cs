@@ -105,17 +105,15 @@ namespace Gameplay.LevelMenu
 
         private void Clear()
         {
+            foreach (CategoriesGroupViewComponent categoryGroup in _categoryGroups)
+            {
+                if (categoryGroup != null)
+                {
+                    Destroy(categoryGroup.gameObject);
+                }
+            }
+
             _categoryGroups.Clear();
-
-            if (CategoriesGroupViewContainer == null)
-            {
-                return;
-            }
-
-            for (int i = CategoriesGroupViewContainer.childCount - 1; i >= 0; i--)
-            {
-                Destroy(CategoriesGroupViewContainer.GetChild(i).gameObject);
-            }
         }
 
         private async UniTask<LevelViewComponent> CreateLevelViewAsync(LevelEntry levelEntry, Transform parent)
